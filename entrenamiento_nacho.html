@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Mi Entreno</title>
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --bg2: #141414;
+    --bg3: #1c1c1e;
+    --bg4: #242426;
+    --line: rgba(255,255,255,0.08);
+    --line2: rgba(255,255,255,0.14);
+    --text: #f2f2f7;
+    --text2: rgba(235,235,245,0.8);
+    --text3: rgba(235,235,245,0.45);
+    --accent: #e8d5b0;
+    --accent2: #c9a96e;
+    --green: #30d158;
+    --green-bg: rgba(48,209,88,0.12);
+    --orange: #ff9f0a;
+    --orange-bg: rgba(255,159,10,0.12);
+    --red: #ff453a;
+    --red-bg: rgba(255,69,58,0.12);
+    --blue: #0a84ff;
+    --blue-bg: rgba(10,132,255,0.12);
+    --purple: #bf5af2;
+    --purple-bg: rgba(191,90,242,0.12);
+    --r: 14px;
+    --r2: 10px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { font-family: -apple-system, "SF Pro Text", "Helvetica Neue", sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; -webkit-font-smoothing: antialiased; }
+
+  .hdr { padding: 52px 20px 0; }
+  .hdr-eyebrow { font-size: 12px; font-weight: 600; letter-spacing: .08em; color: var(--accent2); text-transform: uppercase; margin-bottom: 6px; }
+  .hdr-title { font-size: 34px; font-weight: 700; letter-spacing: -.6px; line-height: 1.1; }
+  .hdr-sub { font-size: 14px; color: var(--text3); margin-top: 5px; }
+  .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 18px 0 0; }
+  .stat-pill { background: var(--bg3); border-radius: var(--r2); padding: 10px 12px; text-align: center; }
+  .stat-n { font-size: 20px; font-weight: 700; color: var(--accent); letter-spacing: -.3px; }
+  .stat-l { font-size: 10px; color: var(--text3); margin-top: 2px; letter-spacing: .03em; }
+
+  .tabs-wrap { position: sticky; top: 0; z-index: 100; background: var(--bg); padding: 14px 0 0; border-bottom: 1px solid var(--line); }
+  .tabs { display: flex; padding: 0 20px 14px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; gap: 8px; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { flex-shrink: 0; padding: 8px 20px; border-radius: 20px; border: 1px solid var(--line2); background: transparent; font-family: -apple-system, sans-serif; font-size: 13px; font-weight: 500; color: var(--text3); cursor: pointer; transition: all .2s; -webkit-appearance: none; }
+  .tab.active { background: var(--accent); border-color: var(--accent); color: #1a1208; font-weight: 700; }
+
+  .day-panel { display: none; padding: 0 20px 40px; }
+  .day-panel.active { display: block; }
+  .day-intro { padding: 18px 0 4px; }
+  .day-name { font-size: 22px; font-weight: 700; letter-spacing: -.4px; }
+  .day-desc { font-size: 13px; color: var(--text3); margin-top: 4px; line-height: 1.5; }
+
+  .section-hdr { display: flex; align-items: center; gap: 8px; margin: 22px 0 10px; }
+  .section-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent2); flex-shrink: 0; }
+  .section-dot.corr { background: var(--orange); }
+  .section-label { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--text3); }
+
+  .ex-card { background: var(--bg2); border-radius: var(--r); margin-bottom: 8px; overflow: hidden; border: 1px solid var(--line); }
+  .ex-card.open { border-color: var(--line2); }
+  .ex-row { display: flex; align-items: center; gap: 12px; padding: 13px 14px; cursor: pointer; -webkit-user-select: none; }
+  .ex-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 2px; }
+  .dot-push { background: var(--purple); }
+  .dot-pull { background: var(--green); }
+  .dot-legs { background: var(--orange); }
+  .dot-corr { background: var(--red); }
+  .dot-core { background: var(--blue); }
+
+  .ex-text { flex: 1; min-width: 0; }
+  .ex-name { font-size: 15px; font-weight: 600; color: var(--text); line-height: 1.3; }
+  .ex-machine { font-size: 12px; color: var(--accent2); margin-top: 3px; font-weight: 500; }
+  .ex-chips { display: flex; gap: 5px; margin-top: 6px; flex-wrap: wrap; }
+  .chip { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 6px; }
+  .chip-green { background: var(--green-bg); color: var(--green); }
+  .chip-orange { background: var(--orange-bg); color: var(--orange); }
+  .chip-purple { background: var(--purple-bg); color: var(--purple); }
+
+  .ex-right { text-align: right; flex-shrink: 0; }
+  .ex-sets { font-size: 16px; font-weight: 700; color: var(--accent); letter-spacing: -.3px; }
+  .ex-weight { font-size: 12px; color: var(--text3); margin-top: 2px; }
+  .ex-chevron { font-size: 11px; color: var(--text3); transition: transform .2s; margin-left: 2px; flex-shrink: 0; }
+  .ex-card.open .ex-chevron { transform: rotate(180deg); }
+
+  .ex-detail { display: none; padding: 0 14px 14px; border-top: 1px solid var(--line); }
+  .ex-card.open .ex-detail { display: block; animation: sd .15s ease; }
+  @keyframes sd { from { opacity: 0; transform: translateY(-3px); } to { opacity: 1; transform: translateY(0); } }
+
+  .location-box { background: var(--bg3); border-radius: var(--r2); padding: 11px 13px; margin: 12px 0 10px; border-left: 3px solid var(--accent2); border-radius: 0 var(--r2) var(--r2) 0; }
+  .loc-machine { font-size: 13px; font-weight: 700; color: var(--accent); margin-bottom: 5px; }
+  .loc-where { font-size: 13px; color: var(--text2); line-height: 1.55; }
+
+  .metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 0 0 10px; }
+  .metric-box { background: var(--bg3); border-radius: var(--r2); padding: 9px 8px; text-align: center; }
+  .metric-val { font-size: 15px; font-weight: 700; color: var(--text); }
+  .metric-lbl { font-size: 10px; color: var(--text3); margin-top: 2px; letter-spacing: .04em; text-transform: uppercase; }
+
+  .weight-editor { background: var(--bg3); border-radius: var(--r2); padding: 12px 14px; margin-bottom: 10px; }
+  .weight-editor-lbl { font-size: 11px; font-weight: 700; color: var(--text3); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 10px; }
+  .weight-stepper { display: flex; align-items: center; gap: 10px; }
+  .step-btn { width: 48px; height: 48px; border-radius: 24px; background: var(--bg4); border: 1px solid var(--line2); color: var(--text); font-size: 26px; font-family: -apple-system, sans-serif; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; -webkit-appearance: none; line-height: 1; transition: transform .1s; }
+  .step-btn:active { transform: scale(0.9); }
+  .weight-display { flex: 1; text-align: center; }
+  .weight-input-raw { font-size: 32px; font-weight: 700; color: var(--accent); letter-spacing: -.5px; background: transparent; border: none; outline: none; text-align: center; width: 100%; font-family: -apple-system, sans-serif; -webkit-appearance: none; }
+  .weight-unit { font-size: 12px; color: var(--text3); display: block; margin-top: 1px; }
+
+  .ex-note-box { background: var(--bg3); border-radius: var(--r2); padding: 11px 13px; font-size: 13px; color: var(--text2); line-height: 1.6; margin-bottom: 10px; }
+  .prog-line { font-size: 12px; color: var(--accent2); margin-top: 7px; padding-top: 7px; border-top: 1px solid var(--line); display: flex; gap: 5px; align-items: flex-start; line-height: 1.5; }
+  .prog-arrow { flex-shrink: 0; color: var(--accent2); }
+
+  .alarm-card { background: var(--red-bg); border: 1px solid rgba(255,69,58,0.2); border-radius: var(--r); padding: 14px 16px; margin-top: 6px; }
+  .alarm-title { font-size: 13px; font-weight: 700; color: var(--red); margin-bottom: 8px; }
+  .alarm-item { font-size: 13px; color: rgba(255,100,90,0.9); line-height: 1.65; padding-left: 14px; position: relative; }
+  .alarm-item::before { content: "·"; position: absolute; left: 0; font-weight: 900; }
+
+  .save-section { margin-top: 24px; padding: 14px 16px; background: var(--bg2); border-radius: var(--r); border: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .save-info { font-size: 13px; color: var(--text3); }
+  .save-ok { font-size: 13px; font-weight: 600; color: var(--green); display: none; margin-top: 2px; }
+  .save-btn { background: var(--accent); color: #1a1208; font-family: -apple-system, sans-serif; font-size: 14px; font-weight: 700; padding: 10px 24px; border-radius: 22px; border: none; cursor: pointer; flex-shrink: 0; -webkit-appearance: none; letter-spacing: -.2px; transition: transform .1s; }
+  .save-btn:active { transform: scale(0.96); }
+  .bottom { height: 40px; }
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-eyebrow">Nacho &middot; Synergym</div>
+  <div class="hdr-title">Mi entreno</div>
+  <div class="hdr-sub">3 dias &middot; Hipertrofia + correctivo hombro</div>
+  <div class="stats-row">
+    <div class="stat-pill"><div class="stat-n">3</div><div class="stat-l">Dias/semana</div></div>
+    <div class="stat-pill"><div class="stat-n">2x</div><div class="stat-l">Frec. muscular</div></div>
+    <div class="stat-pill"><div class="stat-n">RIR2</div><div class="stat-l">Intensidad</div></div>
+  </div>
+</div>
+
+<div class="tabs-wrap">
+  <div class="tabs">
+    <button class="tab active" onclick="switchDay(0)">Dia 1 &mdash; Empuje</button>
+    <button class="tab" onclick="switchDay(1)">Dia 2 &mdash; Traccion</button>
+    <button class="tab" onclick="switchDay(2)">Dia 3 &mdash; Full body</button>
+  </div>
+</div>
+
+<div id="day0" class="day-panel active"><div class="day-intro"><div class="day-name">Empuje + Cuadriceps</div><div class="day-desc">Pecho &middot; Triceps &middot; Deltoides anterior &middot; Cuadriceps</div></div><div id="cards0"></div></div>
+<div id="day1" class="day-panel"><div class="day-intro"><div class="day-name">Traccion + Gluteo</div><div class="day-desc">Dorsal &middot; Biceps &middot; Trapecio &middot; Isquiotibiales &middot; Gluteo</div></div><div id="cards1"></div></div>
+<div id="day2" class="day-panel"><div class="day-intro"><div class="day-name">Full body + Correctivo</div><div class="day-desc">Compuestos globales &middot; Core &middot; Estabilizadores</div></div><div id="cards2"></div></div>
+<div class="bottom"></div>
+
+<script>
+var DATA = [
+  { sections: [
+    { label:"Bloque principal", corr:false, exs:[
+      { id:"d0e0", name:"Press de pecho maquina", machine:"Technogym Chest Press", where:"Zona de maquinas guiadas. Asiento regulable con palancas a los lados. Respaldo vertical. Ajusta el asiento para que las asas queden a la altura del pecho. Carga con el perno lateral.", dot:"dot-push", sets:"4", reps:"8-10", rir:"RIR 2-3", w:40, step:2.5, unit:"kg", chips:[{t:"seguro hombro",c:"chip-green"}], note:"Agarre neutro, codos a unos 45 grados del torso. Espalda pegada al respaldo en todo momento. Para el ejercicio si sientes dolor en el hombro derecho.", prog:"Sube 2,5 kg cuando completes 4x10 con RIR2 en dos sesiones seguidas." },
+      { id:"d0e1", name:"Press inclinado maquina", machine:"Technogym Incline Chest Press", where:"Maquina de pecho inclinada, junto a la de pecho plano. El respaldo esta inclinado unos 30 grados. Ajusta el asiento para que las asas queden a la altura del pecho alto.", dot:"dot-push", sets:"3", reps:"10-12", rir:"RIR 2", w:22.5, step:2.5, unit:"kg", chips:[{t:"seguro hombro",c:"chip-green"}], note:"Angulo maximo 30 grados, no mas. El angulo bajo es mas seguro para el hombro y trabaja igualmente bien el pecho alto.", prog:"Sube 2,5 kg al completar 3x12 limpio." },
+      { id:"d0e2", name:"Press hombros maquina guiada", machine:"Technogym Shoulder Press", where:"Maquina con respaldo vertical y asas que suben recto hacia arriba. Suele estar en la zona de maquinas de empuje, cerca del press de pecho. Ajusta el asiento para que las asas queden a la altura de los hombros.", dot:"dot-push", sets:"3", reps:"10-12", rir:"RIR 2-3", w:27.5, step:2.5, unit:"kg", chips:[{t:"atencion: para si duele",c:"chip-orange"}], note:"El recorrido fijo de la maquina protege el hombro. Para inmediatamente si notas el arco doloroso entre 60 y 120 grados de subida.", prog:"Sube 2,5 kg al completar 3x12 con RIR2." },
+      { id:"d0e3", name:"Prensa de piernas", machine:"Technogym Leg Press 45 grados", where:"Zona de piernas. Maquina grande inclinada en angulo de 45 grados. Plataforma para pies arriba y asiento abajo. Pon el perno en la pesa correspondiente.", dot:"dot-legs", sets:"4", reps:"10-12", rir:"RIR 2", w:55, step:5, unit:"kg", chips:[{t:"compuesto clave",c:"chip-purple"}], note:"Rango completo. Rodilla no se bloquea arriba del todo. Pies a anchura de hombros, ligeramente altos en la plataforma.", prog:"Sube 5 kg al completar 4x12 con RIR2." },
+      { id:"d0e4", name:"Extension de cuadriceps", machine:"Technogym Leg Extension", where:"Maquina con rodillo acolchado para las espinillas, asiento y respaldo. Junto a la prensa de piernas. Ajusta el respaldo para que la rodilla quede justo en el borde del asiento.", dot:"dot-legs", sets:"3", reps:"12-15", rir:"RIR 2", w:30, step:2.5, unit:"kg", chips:[], note:"Pausa de 1 segundo en extension maxima. Baja en 2-3 segundos controlando el movimiento.", prog:"Sube 2,5-5 kg al completar 3x15." },
+      { id:"d0e5", name:"Extension de triceps en polea alta", machine:"Technogym Cable Station, torre alta", where:"Modulo de poleas dobles (torre alta y baja). Pon el accesorio de cuerda o barra recta en la polea de arriba. Ajusta el peso con el perno.", dot:"dot-push", sets:"3", reps:"12-15", rir:"RIR 2", w:12.5, step:2.5, unit:"kg", chips:[], note:"Codo pegado al cuerpo y fijo, solo se mueve el antebrazo hacia abajo. No dejes que el codo se separe.", prog:"Sube 2,5 kg al completar 3x15." }
+    ]},
+    { label:"Correctivo hombro (obligatorio)", corr:true, exs:[
+      { id:"d0c0", name:"Rotacion externa con goma o mancuerna", machine:"Goma de resistencia ligera o mancuerna 2-3 kg", where:"Zona de accesorios o peso libre. Busca las gomas de resistencia colgadas en soporte de pared, o coge una mancuerna de 2-3 kg del soporte.", dot:"dot-corr", sets:"3", reps:"15", rir:"-", w:null, step:0, unit:"muy ligero", chips:[{t:"correctivo",c:"chip-orange"}], note:"Codo doblado a 90 grados, pegado al costado. Gira el antebrazo hacia fuera sin mover el codo. Solo en rango sin dolor. Muy ligero.", prog:"No aumentar carga. La calidad del movimiento es lo importante." },
+      { id:"d0c1", name:"Face pull en polea alta", machine:"Technogym Cable Station, torre alta", where:"Misma torre de poleas que el triceps, cambia el accesorio por la cuerda larga. Ajusta la polea a la altura de la cara aproximadamente.", dot:"dot-corr", sets:"3", reps:"15", rir:"-", w:null, step:0, unit:"muy ligero", chips:[{t:"correctivo",c:"chip-orange"}], note:"Tira hacia la cara separando las manos al llegar. Codos arriba y hacia atras. Pausa 1 segundo en la posicion final. Peso muy ligero.", prog:"Es un ejercicio de activacion y salud del hombro, no de fuerza. No aumentar peso." }
+    ]}
+  ]},
+  { sections: [
+    { label:"Bloque principal", corr:false, exs:[
+      { id:"d1e0", name:"Jalon al pecho polea alta", machine:"Technogym Lat Machine / Lat Pulldown", where:"Maquina con barra larga curva (forma de W) colgada arriba y rodillos para bloquear los muslos. Ajusta los rodillos para que te sujeten bien al tirar. En zona de espalda.", dot:"dot-pull", sets:"4", reps:"8-10", rir:"RIR 2-3", w:45, step:2.5, unit:"kg", chips:[{t:"seguro hombro",c:"chip-green"}], note:"Agarre prono ancho en la barra. Tira hasta la barbilla con el pecho ligeramente inclinado. Nunca por detras de la nuca.", prog:"Sube 2,5-5 kg al completar 4x10 con buena forma." },
+      { id:"d1e1", name:"Remo en polea baja agarre neutro", machine:"Technogym Low Row o Cable Station baja", where:"Maquina baja con asiento y apoyapies, o la polea baja de la torre Cable Station. Usa el accesorio triangular en V para agarre neutro (palmas enfrentadas).", dot:"dot-pull", sets:"4", reps:"10-12", rir:"RIR 2", w:35, step:2.5, unit:"kg", chips:[], note:"Espalda recta siempre. Primero junta las escapulas, luego dobla los codos. No balancear el torso hacia atras.", prog:"Sube 2,5 kg al completar 4x12." },
+      { id:"d1e2", name:"Remo maquina con pecho apoyado", machine:"Technogym Chest Supported Row", where:"Maquina donde el pecho se apoya en una almohadilla inclinada. Elimina el balanceo lumbar. Si no la ves, pregunta al monitor. Alternativa: remo con mancuerna apoyando la mano libre en un banco.", dot:"dot-pull", sets:"3", reps:"10-12", rir:"RIR 2", w:35, step:2.5, unit:"kg", chips:[], note:"El pecho apoyado estabiliza la espalda por completo. Lleva los codos hacia atras y arriba, pausa en retraccion maxima 1 segundo.", prog:"Sube 2,5-5 kg al completar 3x12." },
+      { id:"d1e3", name:"Hip thrust", machine:"Banco plano + barra libre (o maquina de gluteos)", where:"Zona de peso libre. Apoya los hombros en el borde de un banco plano. Barra sobre las caderas con la almohadilla acolchada (suele haber una colgada cerca de los bancos). Algunos Synergym tienen maquina especifica de hip thrust.", dot:"dot-legs", sets:"4", reps:"10-12", rir:"RIR 2", w:30, step:5, unit:"kg", chips:[{t:"compuesto clave",c:"chip-purple"}], note:"Pausa obligatoria de 2 segundos arriba con el gluteo apretado. Pies a anchura de cadera, rodillas a 90 grados arriba.", prog:"Sube 5 kg al completar 4x12 con pausa." },
+      { id:"d1e4", name:"Curl femoral tumbado", machine:"Technogym Leg Curl (prone, tumbado boca abajo)", where:"Maquina donde te tumbas boca abajo y curlas las piernas hacia el gluteo. Junto a la prensa de piernas. Ajusta el rodillo para que quede justo encima de los talones, no en los gemelos.", dot:"dot-legs", sets:"3", reps:"10-12", rir:"RIR 2", w:37.5, step:2.5, unit:"kg", chips:[], note:"Baja lento: cuenta 3 segundos en la fase excentrica (bajada). Rango completo de movimiento.", prog:"Sube 2,5-5 kg al completar 3x12." },
+      { id:"d1e5", name:"Curl de biceps en polea baja", machine:"Technogym Cable Station, torre baja", where:"La misma torre de poleas en posicion baja. Usa la barra corta recta o el accesorio EZ curvo. Pon el peso en el perno.", dot:"dot-pull", sets:"3", reps:"12-15", rir:"RIR 2", w:25, step:2.5, unit:"kg", chips:[], note:"Codo fijo a los costados. No balancear el torso. Aprieta el biceps en la parte alta del recorrido.", prog:"Sube 2,5 kg al completar 3x15." }
+    ]},
+    { label:"Correctivo hombro (obligatorio)", corr:true, exs:[
+      { id:"d1c0", name:"Retraccion escapular en polea", machine:"Technogym Cable Station, torre media", where:"La misma torre de poleas con la altura de la polea a la altura del pecho o ligeramente por encima. Usa el accesorio recto corto o el triangular. Peso simbolico.", dot:"dot-corr", sets:"3", reps:"15", rir:"-", w:null, step:0, unit:"muy ligero", chips:[{t:"correctivo",c:"chip-orange"}], note:"Brazos casi extendidos. El movimiento es solo juntar las escapulas por detras. No doblar los codos ni encoger los hombros hacia arriba.", prog:"Activacion pura. Peso minimo siempre." },
+      { id:"d1c1", name:"Face pull en polea alta", machine:"Technogym Cable Station, torre alta", where:"Igual que el Dia 1. Polea alta con accesorio de cuerda larga.", dot:"dot-corr", sets:"3", reps:"15", rir:"-", w:null, step:0, unit:"muy ligero", chips:[{t:"correctivo",c:"chip-orange"}], note:"Tira hacia la cara, codos arriba, separa las manos al llegar. Pausa 1 segundo. Pilar de recuperacion del manguito.", prog:"Nunca saltarselo. Cada sesion." }
+    ]}
+  ]},
+  { sections: [
+    { label:"Bloque principal", corr:false, exs:[
+      { id:"d2e0", name:"Sentadilla en multipower", machine:"Technogym Multipower (Smith Machine)", where:"Barra fijada en railes verticales con topes de seguridad. Zona de peso libre o sala de functional. Pon la barra en los trapecios bajos, no en el cuello. La barra pesa unos 10-15 kg sin anillas.", dot:"dot-legs", sets:"4", reps:"8-10", rir:"RIR 2-3", w:25, step:2.5, unit:"kg en discos", chips:[{t:"compuesto clave",c:"chip-purple"}], note:"Pies ligeramente por delante de la vertical de la barra. Profundidad progresiva. Agarre ancho y comodo en la barra, no carga el hombro.", prog:"Sube 2,5-5 kg por semana mientras la forma lo permita." },
+      { id:"d2e1", name:"Jalon agarre neutro con V-bar", machine:"Technogym Lat Machine, accesorio V-bar", where:"La misma maquina de jalon del Dia 2. Cambia la barra larga por el accesorio triangular en V que encontraras colgado en la maquina o en un soporte de accesorios cercano.", dot:"dot-pull", sets:"4", reps:"10-12", rir:"RIR 2", w:45, step:2.5, unit:"kg", chips:[{t:"seguro hombro",c:"chip-green"}], note:"Agarre neutro con palmas enfrentadas. Reduce la tension en el hombro respecto al agarre prono. Tira hasta el esternon.", prog:"Sube 2,5 kg al completar 4x12." },
+      { id:"d2e2", name:"Press pecho con mancuernas en banco plano", machine:"Mancuernas libres + banco plano", where:"Zona de peso libre. Coge mancuernas de 14 kg del soporte y tumba en un banco plano. Los bancos planos suelen estar junto al soporte de mancuernas.", dot:"dot-push", sets:"3", reps:"10-12", rir:"RIR 2", w:14, step:2, unit:"kg c/u", chips:[{t:"seguro hombro",c:"chip-green"}], note:"Codos a 30-45 grados del torso (no completamente abiertos). No bajar las mancuernas mas alla del nivel del pecho.", prog:"Sube a mancuernas de 16 kg al completar 3x12 limpio." },
+      { id:"d2e3", name:"Curl femoral tumbado", machine:"Technogym Leg Curl (tumbado boca abajo)", where:"La misma maquina que el Dia 2. Segunda exposicion semanal con menos volumen.", dot:"dot-legs", sets:"3", reps:"12-15", rir:"RIR 2-3", w:35, step:2.5, unit:"kg", chips:[], note:"Misma ejecucion que el Dia 2. Reduce el peso si notas fatiga acumulada en los isquios.", prog:"Sube 2,5 kg al completar 3x15." },
+      { id:"d2e4", name:"Curl martillo con mancuernas", machine:"Mancuernas libres", where:"Zona de peso libre. Coge mancuernas de 10 kg. Puedes hacerlo de pie o sentado en un banco. Las mancuernas estan ordenadas por peso en el soporte.", dot:"dot-pull", sets:"3", reps:"12-15", rir:"RIR 2", w:10, step:2, unit:"kg c/u", chips:[], note:"Agarre neutro con las palmas enfrentadas (como martillo). Trabaja el braquial ademas del biceps. Codo fijo al costado.", prog:"Sube a mancuernas de 12 kg al completar 3x15." },
+      { id:"d2e5", name:"Extension de triceps polea baja (press frances)", machine:"Technogym Cable Station, torre baja", where:"Torre de poleas en posicion baja. Usa la barra corta EZ curva o la cuerda. Empuja hacia arriba y un poco hacia atras. El codo apunta al techo.", dot:"dot-push", sets:"3", reps:"12-15", rir:"RIR 2", w:12.5, step:2.5, unit:"kg", chips:[], note:"El codo no se mueve en ningun momento. Version en polea: tension constante y menos estres en el codo que con mancuerna.", prog:"Sube 2,5 kg al completar 3x15." }
+    ]},
+    { label:"Correctivo hombro + Core (obligatorio)", corr:true, exs:[
+      { id:"d2c0", name:"Rotacion interna isometrica en pared", machine:"Sin equipamiento, solo una pared", where:"Cualquier pared del gimnasio. No necesitas nada mas.", dot:"dot-corr", sets:"3", reps:"10 seg", rir:"-", w:null, step:0, unit:"corporal", chips:[{t:"correctivo",c:"chip-orange"}], note:"Codo doblado a 90 grados, antebrazo contra la pared. Empuja suavemente la pared sin mover el brazo. Solo si no hay dolor.", prog:"Aumenta la intensidad del empuje muy gradualmente semana a semana." },
+      { id:"d2c1", name:"Plancha frontal", machine:"Esterilla en el suelo", where:"Zona de estiramientos o suelo del gym. Coge una esterilla del soporte si hay disponible.", dot:"dot-core", sets:"3", reps:"30-45 seg", rir:"-", w:null, step:0, unit:"corporal", chips:[{t:"core",c:"chip-purple"}], note:"Apoyo en antebrazos y puntas de los pies. Columna neutral. No hundir la cadera ni subir el trasero. Respira con normalidad.", prog:"Aumenta 5 segundos por semana cuando aguantes sin temblar." },
+      { id:"d2c2", name:"Bird dog", machine:"Esterilla en el suelo", where:"Zona de estiramientos. A cuatro patas sobre la esterilla.", dot:"dot-core", sets:"3", reps:"10 c/lado", rir:"-", w:null, step:0, unit:"corporal", chips:[{t:"core",c:"chip-purple"}], note:"Extiende brazo derecho y pierna izquierda a la vez, lento y controlado. La cadera no debe rotar. Alterna lados sin prisa.", prog:"Cuando domines bien el movimiento, usa una goma ligera en los tobillos." }
+    ]}
+  ]}
+];
+
+var weights = {};
+function load() { try { var s = localStorage.getItem('nacho_v3'); if(s) weights = JSON.parse(s); } catch(e){} }
+function save(d) {
+  try {
+    localStorage.setItem('nacho_v3', JSON.stringify(weights));
+    var ok = document.getElementById('ok'+d);
+    if(ok) { ok.style.display='block'; setTimeout(function(){ ok.style.display='none'; },2000); }
+  } catch(e){}
+}
+function getW(id,def) { return weights[id]!==undefined ? weights[id] : def; }
+function fmt(n) { if(n===null||n===undefined) return ''; return (n%1===0)?String(n):n.toFixed(1); }
+function adj(id,def,step,dir) {
+  var cur=parseFloat(getW(id,def))||0;
+  var next=Math.round((cur+dir*step)*100)/100;
+  if(next<0) next=0;
+  weights[id]=next;
+  var el=document.getElementById('wn_'+id); if(el) el.value=fmt(next);
+  var top=document.getElementById('wtop_'+id); if(top) top.textContent=fmt(next);
+}
+function onInput(id,val) {
+  var n=parseFloat(val);
+  if(!isNaN(n)) { weights[id]=n; var top=document.getElementById('wtop_'+id); if(top) top.textContent=fmt(n); }
+}
+function toggleCard(el) { el.closest('.ex-card').classList.toggle('open'); }
+function buildDay(di) {
+  var cont=document.getElementById('cards'+di);
+  if(cont.hasChildNodes()) return;
+  var day=DATA[di]; var h='';
+  day.sections.forEach(function(sec) {
+    h+='<div class="section-hdr"><div class="section-dot'+(sec.corr?' corr':'')+'"></div><div class="section-label">'+sec.label+'</div></div>';
+    sec.exs.forEach(function(ex) {
+      var curW=getW(ex.id,ex.w); var hasW=ex.step>0&&ex.w!==null;
+      var chips=ex.chips.map(function(c){ return '<span class="chip '+c.c+'">'+c.t+'</span>'; }).join('');
+      h+='<div class="ex-card" id="card_'+ex.id+'">';
+      h+='<div class="ex-row" onclick="toggleCard(this)">';
+      h+='<div class="ex-dot '+ex.dot+'"></div>';
+      h+='<div class="ex-text"><div class="ex-name">'+ex.name+'</div>';
+      h+='<div class="ex-machine">'+ex.machine+'</div>';
+      if(chips) h+='<div class="ex-chips">'+chips+'</div>';
+      h+='</div>';
+      h+='<div class="ex-right"><div class="ex-sets">'+ex.sets+'&times;'+ex.reps+'</div>';
+      h+='<div class="ex-weight"><span id="wtop_'+ex.id+'">'+(hasW?fmt(curW):'')+'</span>'+(hasW?' '+ex.unit:ex.unit)+'</div></div>';
+      h+='<div class="ex-chevron">&#9660;</div></div>';
+      h+='<div class="ex-detail">';
+      h+='<div class="location-box"><div class="loc-machine">'+ex.machine+'</div><div class="loc-where">'+ex.where+'</div></div>';
+      h+='<div class="metrics-grid">';
+      h+='<div class="metric-box"><div class="metric-val">'+ex.sets+'</div><div class="metric-lbl">Series</div></div>';
+      h+='<div class="metric-box"><div class="metric-val">'+ex.reps+'</div><div class="metric-lbl">Reps</div></div>';
+      h+='<div class="metric-box"><div class="metric-val">'+ex.rir+'</div><div class="metric-lbl">RIR</div></div>';
+      h+='</div>';
+      if(hasW) {
+        h+='<div class="weight-editor"><div class="weight-editor-lbl">Peso de trabajo</div>';
+        h+='<div class="weight-stepper">';
+        h+='<button class="step-btn" onclick="adj(\''+ex.id+'\','+ex.w+','+ex.step+',-1)">&#8722;</button>';
+        h+='<div class="weight-display"><input class="weight-input-raw" id="wn_'+ex.id+'" type="number" inputmode="decimal" value="'+fmt(curW)+'" step="'+ex.step+'" onchange="onInput(\''+ex.id+'\',this.value)"><span class="weight-unit">'+ex.unit+'</span></div>';
+        h+='<button class="step-btn" onclick="adj(\''+ex.id+'\','+ex.w+','+ex.step+',1)">+</button>';
+        h+='</div></div>';
+      }
+      h+='<div class="ex-note-box">'+ex.note+'<div class="prog-line"><span class="prog-arrow">&#8593;</span>'+ex.prog+'</div></div>';
+      h+='</div></div>';
+    });
+  });
+  if(di===2) {
+    h+='<div class="alarm-card"><div class="alarm-title">Para el ejercicio si aparece:</div>';
+    ['Dolor agudo, punzante o irradiado al brazo','Debilidad subita o chasquido en el hombro','Dolor que no cede a los 10 min de reposo','Reproduccion del arco doloroso (60-120 grados de abduccion)','Dolor nocturno que empeore tras la sesion'].forEach(function(t){ h+='<div class="alarm-item">'+t+'</div>'; });
+    h+='</div>';
+  }
+  h+='<div class="save-section"><div><div class="save-info">Guardar pesos de hoy</div><div class="save-ok" id="ok'+di+'">Guardado &#10003;</div></div><button class="save-btn" onclick="save('+di+')">Guardar</button></div>';
+  cont.innerHTML=h;
+}
+function switchDay(i) {
+  document.querySelectorAll('.tab').forEach(function(b,j){ b.classList.toggle('active',i===j); });
+  document.querySelectorAll('.day-panel').forEach(function(p,j){ p.classList.toggle('active',i===j); });
+  buildDay(i); window.scrollTo(0,0);
+}
+load(); buildDay(0);
+</script>
+</body>
+</html>
