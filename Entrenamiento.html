@@ -114,6 +114,10 @@ body{font-family:-apple-system,sans-serif;background:#0a0a0a;color:#f2f2f7;-webk
 .hist-row{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-top:1px solid rgba(255,255,255,.06)}
 .hist-date{font-size:13px;color:rgba(235,235,245,.5)}
 .hist-w{font-size:15px;font-weight:600;color:#e8d5b0}
+.card.ready{background:rgba(48,209,88,.08);border-color:rgba(48,209,88,.3)}
+.card.ready .sets-w{color:#30d158;font-weight:700}
+.card.ready .wt-val::before{content:"+"}
+.card.ready .ex-name{color:#30d158}
 </style>
 </head>
 <body>
@@ -124,7 +128,7 @@ body{font-family:-apple-system,sans-serif;background:#0a0a0a;color:#f2f2f7;-webk
     <div class="title">Mi entreno</div>
     <div class="sub">3 dias &middot; Hipertrofia + correctivo hombro</div>
   </div>
-  <div class="chart-icon" onclick="openProgress()">
+  <div class="chart-icon" onclick="toggleProgress()">
     <svg viewBox="0 0 20 20" fill="none"><polyline points="2,15 7,9 11,12 18,4" stroke="#e8d5b0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7" cy="9" r="1.5" fill="#e8d5b0"/><circle cx="11" cy="12" r="1.5" fill="#e8d5b0"/><circle cx="18" cy="4" r="1.5" fill="#e8d5b0"/></svg>
   </div>
 </div>
@@ -221,30 +225,41 @@ var D=[
  ]}
 ];
 
-var W={};var H={};
+var W={};var H={};var R={};
 var currentDay=0;var progDay=0;var progExIdx=0;
 var progChart=null;
 
 function load(){
   try{var s=localStorage.getItem('nacho4');if(s)W=JSON.parse(s);}catch(e){}
   try{var h=localStorage.getItem('nacho4h');if(h)H=JSON.parse(h);}catch(e){}
+  try{var r=localStorage.getItem('nacho4r');if(r)R=JSON.parse(r);}catch(e){}
 }
 function autoSave(){try{localStorage.setItem('nacho4',JSON.stringify(W));}catch(e){}}
 function saveHistory(){try{localStorage.setItem('nacho4h',JSON.stringify(H));}catch(e){}}
+function saveReady(){try{localStorage.setItem('nacho4r',JSON.stringify(R));}catch(e){}}
+
 function gw(id,def){return W[id]!==undefined?W[id]:def;}
 function fmt(n){if(n===null||n===undefined)return '';return (n%1===0)?String(n):n.toFixed(1);}
 
 function adj(id,def,st,dir){
   var c=parseFloat(gw(id,def))||0;
   var n=Math.round((c+dir*st)*100)/100;
-  if(n<0)n=0;W[id]=n;
+  if(n<0)n=0;
+  if(dir>0&&R[id]){R[id]=false;saveReady();applyReady(id);}
+  W[id]=n;
   var i=document.getElementById('wi'+id);if(i)i.value=fmt(n);
   var t=document.getElementById('wt'+id);if(t)t.textContent=fmt(n);
   autoSave();
 }
 function wchange(id,val){
   var n=parseFloat(val);
-  if(!isNaN(n)){W[id]=n;var t=document.getElementById('wt'+id);if(t)t.textContent=fmt(n);autoSave();}
+  if(!isNaN(n)){
+    var prev=parseFloat(gw(id,0))||0;
+    if(n>prev&&R[id]){R[id]=false;saveReady();applyReady(id);}
+    W[id]=n;
+    var t=document.getElementById('wt'+id);if(t)t.textContent=fmt(n);
+    autoSave();
+  }
 }
 function tog(el){el.closest('.card').classList.toggle('open');}
 
@@ -261,9 +276,6 @@ function swDay(i){
   }
 }
 
-function sw(i){swDay(i);}
-function swProg(i){swDay(i);}
-
 function build(di){
   var cont=document.getElementById('c'+di);
   if(cont.innerHTML.trim()!=='')return;
@@ -277,13 +289,13 @@ function build(di){
       var chips='';
       for(var ci=0;ci<ex.ch.length;ci++){chips+='<span class="chip '+ex.ch[ci].c+'">'+ex.ch[ci].t+'</span>';}
       h+='<div class="card">';
-      h+='<div class="card-row" onclick="tog(this)">';
+      h+='<div class="card-row" onclick="tog(this)" oncontextmenu="return false" onpointerdown="startHold(event,\''+ex.id+'\')" onpointerup="cancelHold()" onpointerleave="cancelHold()" onpointercancel="cancelHold()">';
       h+='<div class="dot '+ex.dot+'"></div>';
       h+='<div class="card-text"><div class="ex-name">'+ex.n+'</div><div class="ex-mach">'+ex.m+'</div>';
       if(chips)h+='<div class="chips">'+chips+'</div>';
       h+='</div>';
       h+='<div class="card-right"><div class="sets-n">'+ex.s+'&times;'+ex.r+'</div>';
-      h+='<div class="sets-w"><span id="wt'+ex.id+'">'+(hw?fmt(cw):'')+'</span>'+(hw?' '+ex.u:ex.u)+'</div></div>';
+      h+='<div class="sets-w"><span id="wt'+ex.id+'" class="wt-val">'+(hw?fmt(cw):'')+'</span>'+(hw?' '+ex.u:ex.u)+'</div></div>';
       h+='<span class="chev">&#9660;</span></div>';
       h+='<div class="detail">';
       h+='<div class="loc"><div class="loc-m">'+ex.m+'</div><div class="loc-w">'+ex.w2+'</div></div>';
@@ -348,6 +360,38 @@ function getDayExs(di){
   return list;
 }
 
+var holdTimer=null;var holdTarget=null;
+
+function startHold(e,id){
+  holdTarget=id;
+  holdTimer=setTimeout(function(){
+    toggleReady(id);
+    holdTarget=null;
+  },500);
+}
+function cancelHold(){
+  if(holdTimer){clearTimeout(holdTimer);holdTimer=null;}
+}
+function applyReady(id){
+  var el=document.getElementById('wt'+id);
+  if(!el)return;
+  var card=el.closest('.card');
+  if(!card)return;
+  card.classList.toggle('ready',!!R[id]);
+}
+
+function toggleReady(id){
+  R[id]=!R[id];
+  saveReady();
+  applyReady(id);
+  if(navigator.vibrate)navigator.vibrate(R[id]?60:30);
+}
+
+function toggleProgress(){
+  var inProg=document.getElementById('screen-progress').classList.contains('on');
+  if(inProg){closeProgress();}else{openProgress();}
+}
+
 function openProgress(){
   progDay=currentDay;progExIdx=0;
   document.getElementById('screen-train').classList.remove('on');
@@ -355,9 +399,13 @@ function openProgress(){
   renderProgDay();
   window.scrollTo(0,0);
 }
+
 function closeProgress(){
   document.getElementById('screen-progress').classList.remove('on');
   document.getElementById('screen-train').classList.add('on');
+  var i=currentDay;
+  document.querySelectorAll('.panel').forEach(function(p,j){p.classList.toggle('on',i===j);});
+  document.querySelectorAll('.daycard').forEach(function(c,j){c.classList.toggle('on',i===j);});
   window.scrollTo(0,0);
 }
 
@@ -422,6 +470,7 @@ function renderProgChart(){
 }
 
 load();build(0);build(1);build(2);
+D.forEach(function(day){day.s.forEach(function(sec){sec.e.forEach(function(ex){if(ex.st>0&&ex.w!==null)applyReady(ex.id);});});});
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 </body>
