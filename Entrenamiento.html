@@ -261,7 +261,7 @@ function wchange(id,val){
     autoSave();
   }
 }
-function tog(el){el.closest('.card').classList.toggle('open');}
+function tog(el){if(holdFired){holdFired=false;return;}el.closest('.card').classList.toggle('open');}
 
 function swDay(i){
   currentDay=i;progDay=i;progExIdx=0;
@@ -360,11 +360,13 @@ function getDayExs(di){
   return list;
 }
 
-var holdTimer=null;var holdTarget=null;
+var holdTimer=null;var holdTarget=null;var holdFired=false;
 
 function startHold(e,id){
+  holdFired=false;
   holdTarget=id;
   holdTimer=setTimeout(function(){
+    holdFired=true;
     toggleReady(id);
     holdTarget=null;
   },500);
