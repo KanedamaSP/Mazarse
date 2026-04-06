@@ -7,6 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Mi Entreno</title>
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{font-family:-apple-system,sans-serif;background:#0a0a0a;color:#f2f2f7;-webkit-font-smoothing:antialiased;padding-bottom:60px}
@@ -97,7 +98,6 @@ body{font-family:-apple-system,sans-serif;background:#0a0a0a;color:#f2f2f7;-webk
 .back-btn{width:36px;height:36px;border-radius:10px;background:#1c1c1e;border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
 .back-btn svg{width:16px;height:16px}
 .prog-title{font-size:20px;font-weight:700;letter-spacing:-.3px}
-
 .ex-pills{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:4px;margin-bottom:14px}
 .ex-pills::-webkit-scrollbar{display:none}
 .ex-pill{flex-shrink:0;padding:6px 14px;border-radius:16px;border:1px solid rgba(255,255,255,.15);background:transparent;font-family:-apple-system,sans-serif;font-size:12px;font-weight:500;color:rgba(235,235,245,.45);cursor:pointer;-webkit-appearance:none}
@@ -118,6 +118,36 @@ body{font-family:-apple-system,sans-serif;background:#0a0a0a;color:#f2f2f7;-webk
 .card.ready .sets-w{color:#30d158;font-weight:700}
 .card.ready .wt-val::before{content:"+"}
 .card.ready .ex-name{color:#30d158}
+
+/* ── Segmented control ── */
+.seg{display:flex;background:#1c1c1e;border-radius:10px;padding:3px;margin:12px 0 16px}
+.seg-btn{flex:1;padding:7px;border:none;background:transparent;color:rgba(235,235,245,.4);font-family:-apple-system,sans-serif;font-size:13px;font-weight:600;border-radius:8px;cursor:pointer;-webkit-appearance:none;transition:all .2s}
+.seg-btn.on{background:#2c2c2e;color:#f2f2f7}
+
+/* ── Volume tab ── */
+.vol-hdr{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:rgba(235,235,245,.35);margin:4px 0 10px}
+.vol-card{background:#141414;border-radius:14px;padding:14px;margin-bottom:8px;border:1px solid rgba(255,255,255,.08)}
+.vol-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.vol-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.vol-name{font-size:14px;font-weight:600;flex:1}
+.vol-count{font-size:15px;font-weight:700;color:#e8d5b0;white-space:nowrap}
+.vol-bar-wrap{position:relative;height:6px;background:rgba(255,255,255,.08);border-radius:3px;margin-bottom:6px}
+.vol-bar{height:6px;border-radius:3px;transition:width .5s ease}
+.vol-marker{position:absolute;top:-3px;width:2px;height:12px;background:rgba(255,255,255,.3);border-radius:1px}
+.vol-status{font-size:11px;font-weight:600;margin-bottom:6px}
+.vol-leg{display:flex;gap:14px}
+.vol-leg-item{font-size:10px;color:rgba(235,235,245,.3);display:flex;align-items:center;gap:4px}
+.vol-leg-item::before{content:'';display:inline-block;width:10px;height:2px;background:rgba(255,255,255,.25);border-radius:1px}
+
+/* ── Scientific insight ── */
+.sci-box{background:rgba(10,132,255,.08);border:1px solid rgba(10,132,255,.15);border-radius:14px;padding:14px;margin-bottom:14px}
+.sci-title{font-size:12px;font-weight:700;color:#0a84ff;margin-bottom:8px}
+.sci-text{font-size:12px;color:rgba(10,132,255,.85);line-height:1.7}
+.sci-bullet{display:flex;gap:5px;margin-bottom:3px;align-items:baseline}
+
+/* ── Backup ── */
+.backup-row{display:flex;gap:10px;margin-top:6px}
+.backup-btn{flex:1;padding:13px;background:#1c1c1e;border:1px solid rgba(255,255,255,.1);border-radius:12px;color:rgba(235,235,245,.5);font-family:-apple-system,sans-serif;font-size:13px;font-weight:600;cursor:pointer;-webkit-appearance:none;text-align:center;display:block;text-decoration:none}
 </style>
 </head>
 <body>
@@ -152,14 +182,33 @@ body{font-family:-apple-system,sans-serif;background:#0a0a0a;color:#f2f2f7;-webk
       <div class="prog-title">Mi progreso</div>
     </div>
 
-    <div class="ex-pills" id="prog-pills"></div>
-    <div class="prog-stats">
-      <div class="prog-stat"><div class="prog-stat-n" id="ps-inicio">—</div><div class="prog-stat-l">Inicio</div></div>
-      <div class="prog-stat"><div class="prog-stat-n" id="ps-actual">—</div><div class="prog-stat-l">Actual</div></div>
-      <div class="prog-stat"><div class="prog-stat-n green" id="ps-mejora">—</div><div class="prog-stat-l">Mejora</div></div>
+    <div class="seg">
+      <button class="seg-btn on" id="tab-btn-volumen" onclick="setProgTab('volumen')">Volumen</button>
+      <button class="seg-btn" id="tab-btn-peso" onclick="setProgTab('peso')">Peso</button>
     </div>
-    <div class="chart-container"><canvas id="prog-chart"></canvas></div>
-    <div id="hist-list" class="hist-list"></div>
+
+    <!-- Tab: Peso -->
+    <div id="tab-peso" style="display:none">
+      <div class="ex-pills" id="prog-pills"></div>
+      <div class="prog-stats">
+        <div class="prog-stat"><div class="prog-stat-n" id="ps-inicio">—</div><div class="prog-stat-l">Inicio</div></div>
+        <div class="prog-stat"><div class="prog-stat-n" id="ps-actual">—</div><div class="prog-stat-l">Actual</div></div>
+        <div class="prog-stat"><div class="prog-stat-n green" id="ps-mejora">—</div><div class="prog-stat-l">Mejora</div></div>
+      </div>
+      <div class="chart-container"><canvas id="prog-chart"></canvas></div>
+      <div id="hist-list" class="hist-list"></div>
+    </div>
+
+    <!-- Tab: Volumen -->
+    <div id="tab-volumen">
+      <div id="vol-content"></div>
+    </div>
+
+    <!-- Backup -->
+    <div class="backup-row">
+      <button class="backup-btn" onclick="exportBackup()">&#8593; Exportar datos</button>
+      <label class="backup-btn">&#8595; Importar datos<input type="file" accept=".json" onchange="importBackup(this)" style="display:none"></label>
+    </div>
   </div>
 </div>
 
@@ -178,8 +227,14 @@ body{font-family:-apple-system,sans-serif;background:#0a0a0a;color:#f2f2f7;-webk
   </div>
 </div>
 
+<!-- ============================================================
+     PLAN DE ENTRENAMIENTO
+     Edita este bloque para modificar ejercicios, cargas y series.
+     No tocar nada fuera de este script.
+     ============================================================ -->
 <script>
 var D=[
+ /* ── DIA 1: Empuje + Cuadriceps ── */
  {s:[
   {l:"Bloque principal",r:false,e:[
    {id:"d0e0",n:"Press de pecho maquina",m:"Technogym Chest Press",w2:"Zona de maquinas guiadas. Asiento regulable, palancas a los lados.",dot:"d-push",s:"3",r:"8-10",rir:"RIR 2-3",w:40,st:2.5,u:"kg",ch:[{t:"seguro hombro",c:"cg"}],wu:"1x10 al 50% (~20 kg). Activa el patron antes de las 3 series efectivas. No cuenta para el volumen.",no:"Agarre neutro, codos a 45 grados del torso. Espalda pegada al respaldo. Para si duele el hombro.",pr:"Sube 2,5 kg cuando completes 3x10 con RIR2 dos sesiones seguidas."},
@@ -194,6 +249,8 @@ var D=[
    {id:"d0c1",n:"Face pull en polea alta",m:"Technogym Cable Station, torre alta",w2:"Misma torre de poleas que el triceps. Cambia el accesorio por la cuerda larga.",dot:"d-corr",s:"3",r:"15",rir:"-",w:null,st:0,u:"muy ligero",ch:[{t:"correctivo",c:"co"}],wu:null,no:"Tira hacia la cara separando las manos al llegar. Codos arriba y hacia atras. Pausa 1 segundo.",pr:"Ejercicio de salud del hombro, no de fuerza. No aumentar peso."}
   ]}
  ]},
+
+ /* ── DIA 2: Traccion + Gluteo ── */
  {s:[
   {l:"Bloque principal",r:false,e:[
    {id:"d1e0",n:"Jalon al pecho polea alta",m:"Technogym Lat Machine / Lat Pulldown",w2:"Maquina con barra larga curva colgada arriba y rodillos para los muslos. Zona de espalda.",dot:"d-pull",s:"3",r:"8-10",rir:"RIR 2-3",w:45,st:2.5,u:"kg",ch:[{t:"seguro hombro",c:"cg"}],wu:"1x10 al 50% (~22 kg). Activa el dorsal y prepara el hombro antes de cargar.",no:"Agarre prono ancho en la barra. Tira hasta la barbilla. Nunca por detras de la nuca.",pr:"Sube 2,5-5 kg al completar 3x10 con buena forma."},
@@ -208,6 +265,8 @@ var D=[
    {id:"d1c1",n:"Face pull en polea alta",m:"Technogym Cable Station, torre alta",w2:"Igual que el Dia 1. Polea alta con accesorio de cuerda larga.",dot:"d-corr",s:"3",r:"15",rir:"-",w:null,st:0,u:"muy ligero",ch:[{t:"correctivo",c:"co"}],wu:null,no:"Tira hacia la cara, codos arriba, separa las manos. Pausa 1 segundo.",pr:"Pilar de recuperacion del manguito. Nunca saltarselo."}
   ]}
  ]},
+
+ /* ── DIA 3: Full body + Correctivo ── */
  {s:[
   {l:"Bloque principal",r:false,e:[
    {id:"d2e0",n:"Sentadilla en multipower",m:"Technogym Multipower (Smith Machine)",w2:"Barra fijada en railes verticales. Zona de peso libre. La barra pesa 10-15 kg sin discos.",dot:"d-legs",s:"3",r:"8-10",rir:"RIR 2-3",w:25,st:2.5,u:"kg en discos",ch:[{t:"compuesto clave",c:"cp"}],wu:"1x8 solo con la barra (sin discos). Activa el patron de sentadilla, calienta rodillas y caderas.",no:"Pies ligeramente por delante de la vertical de la barra. Profundidad progresiva.",pr:"Sube 2,5-5 kg por semana mientras la forma lo permita."},
@@ -224,11 +283,18 @@ var D=[
   ]}
  ]}
 ];
+</script>
 
+<!-- ============================================================
+     LOGICA DE LA APP
+     ============================================================ -->
+<script>
 var W={};var H={};var R={};
 var currentDay=0;var progDay=0;var progExIdx=0;
-var progChart=null;
+var progChart=null;var volChart=null;
+var progTab='volumen';
 
+/* ── Persistencia ── */
 function load(){
   try{var s=localStorage.getItem('nacho4');if(s)W=JSON.parse(s);}catch(e){}
   try{var h=localStorage.getItem('nacho4h');if(h)H=JSON.parse(h);}catch(e){}
@@ -238,9 +304,34 @@ function autoSave(){try{localStorage.setItem('nacho4',JSON.stringify(W));}catch(
 function saveHistory(){try{localStorage.setItem('nacho4h',JSON.stringify(H));}catch(e){}}
 function saveReady(){try{localStorage.setItem('nacho4r',JSON.stringify(R));}catch(e){}}
 
+/* ── Utilidades ── */
 function gw(id,def){return W[id]!==undefined?W[id]:def;}
 function fmt(n){if(n===null||n===undefined)return '';return (n%1===0)?String(n):n.toFixed(1);}
 
+function parseReps(r){
+  var m=(r||'').match(/^(\d+)(?:-(\d+))?/);
+  if(!m)return 0;
+  return m[2]?(parseInt(m[1])+parseInt(m[2]))/2:parseInt(m[1]);
+}
+function parseDate(s){
+  var p=s.split('/');return new Date(+p[2],p[1]-1,+p[0]);
+}
+function weekKey(dateStr){
+  var d=parseDate(dateStr),day=d.getDay();
+  var mon=new Date(d.getFullYear(),d.getMonth(),d.getDate()-day+(day===0?-6:1));
+  return mon.getDate()+'/'+(mon.getMonth()+1)+'/'+mon.getFullYear();
+}
+function isThisWeek(dateStr){
+  var now=new Date(),day=now.getDay();
+  var mon=new Date(now.getFullYear(),now.getMonth(),now.getDate()-day+(day===0?-6:1));
+  var sun=new Date(mon.getTime()+6*86400000);
+  var d=parseDate(dateStr);
+  return d>=mon&&d<=sun;
+}
+var MONTHS=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+function fmtWeek(wkStr){var p=wkStr.split('/');return p[0]+' '+MONTHS[parseInt(p[1])-1];}
+
+/* ── Peso de trabajo ── */
 function adj(id,def,st,dir){
   var c=parseFloat(gw(id,def))||0;
   var n=Math.round((c+dir*st)*100)/100;
@@ -261,8 +352,39 @@ function wchange(id,val){
     autoSave();
   }
 }
+
+/* ── Tarjetas ── */
+var holdTimer=null;var holdTarget=null;var holdFired=false;
+
 function tog(el){if(holdFired){holdFired=false;return;}el.closest('.card').classList.toggle('open');}
 
+function startHold(e,id){
+  holdFired=false;
+  holdTarget=id;
+  holdTimer=setTimeout(function(){
+    holdFired=true;
+    toggleReady(id);
+    holdTarget=null;
+  },500);
+}
+function cancelHold(){
+  if(holdTimer){clearTimeout(holdTimer);holdTimer=null;}
+}
+function applyReady(id){
+  var el=document.getElementById('wt'+id);
+  if(!el)return;
+  var card=el.closest('.card');
+  if(!card)return;
+  card.classList.toggle('ready',!!R[id]);
+}
+function toggleReady(id){
+  R[id]=!R[id];
+  saveReady();
+  applyReady(id);
+  if(navigator.vibrate)navigator.vibrate(R[id]?60:30);
+}
+
+/* ── Dias ── */
 function swDay(i){
   currentDay=i;progDay=i;progExIdx=0;
   document.querySelectorAll('.daycard').forEach(function(c,j){c.classList.toggle('on',i===j);});
@@ -276,6 +398,7 @@ function swDay(i){
   }
 }
 
+/* ── Constructor de tarjetas de ejercicio ── */
 function build(di){
   var cont=document.getElementById('c'+di);
   if(cont.innerHTML.trim()!=='')return;
@@ -323,6 +446,7 @@ function build(di){
   cont.innerHTML=h;
 }
 
+/* ── Confirmacion de sesion ── */
 function openConfirm(di){
   var names=['Dia 1 — Empuje','Dia 2 — Traccion','Dia 3 — Full body'];
   document.getElementById('confirm-sub').textContent='Se guardara el progreso de '+names[di]+'. Solo confirma cuando hayas terminado el entreno.';
@@ -352,6 +476,7 @@ function confirmDone(){
   setTimeout(function(){closeConfirm();},1800);
 }
 
+/* ── Pantalla de progreso ── */
 function getDayExs(di){
   var list=[];
   D[di].s.forEach(function(sec){
@@ -360,48 +485,18 @@ function getDayExs(di){
   return list;
 }
 
-var holdTimer=null;var holdTarget=null;var holdFired=false;
-
-function startHold(e,id){
-  holdFired=false;
-  holdTarget=id;
-  holdTimer=setTimeout(function(){
-    holdFired=true;
-    toggleReady(id);
-    holdTarget=null;
-  },500);
-}
-function cancelHold(){
-  if(holdTimer){clearTimeout(holdTimer);holdTimer=null;}
-}
-function applyReady(id){
-  var el=document.getElementById('wt'+id);
-  if(!el)return;
-  var card=el.closest('.card');
-  if(!card)return;
-  card.classList.toggle('ready',!!R[id]);
-}
-
-function toggleReady(id){
-  R[id]=!R[id];
-  saveReady();
-  applyReady(id);
-  if(navigator.vibrate)navigator.vibrate(R[id]?60:30);
-}
-
 function toggleProgress(){
   var inProg=document.getElementById('screen-progress').classList.contains('on');
   if(inProg){closeProgress();}else{openProgress();}
 }
-
 function openProgress(){
   progDay=currentDay;progExIdx=0;
   document.getElementById('screen-train').classList.remove('on');
   document.getElementById('screen-progress').classList.add('on');
+  setProgTab('volumen');
   renderProgDay();
   window.scrollTo(0,0);
 }
-
 function closeProgress(){
   document.getElementById('screen-progress').classList.remove('on');
   document.getElementById('screen-train').classList.add('on');
@@ -411,11 +506,22 @@ function closeProgress(){
   window.scrollTo(0,0);
 }
 
+/* ── Tab switcher ── */
+function setProgTab(tab){
+  progTab=tab;
+  document.getElementById('tab-btn-peso').classList.toggle('on',tab==='peso');
+  document.getElementById('tab-btn-volumen').classList.toggle('on',tab==='volumen');
+  document.getElementById('tab-peso').style.display=tab==='peso'?'':'none';
+  document.getElementById('tab-volumen').style.display=tab==='volumen'?'':'none';
+  if(tab==='volumen')renderVolume();
+}
+
+/* ── Tab: Peso ── */
 function renderProgDay(){
+  if(progTab==='volumen'){renderVolume();return;}
   buildProgPills();
   renderProgChart();
 }
-
 function buildProgPills(){
   var exs=getDayExs(progDay);
   var c=document.getElementById('prog-pills');
@@ -428,7 +534,6 @@ function buildProgPills(){
     c.appendChild(b);
   });
 }
-
 function renderProgChart(){
   var exs=getDayExs(progDay);
   if(!exs.length)return;
@@ -442,8 +547,7 @@ function renderProgChart(){
     document.getElementById('hist-list').innerHTML='<div class="hist-hdr">Historial</div><div style="padding:40px 20px;text-align:center;font-size:13px;color:rgba(235,235,245,.3);line-height:1.7">Sin datos aun.<br>Completa una sesion para ver tu progreso.</div>';
     if(progChart){progChart.destroy();progChart=null;}
     var canvas=document.getElementById('prog-chart');
-    var ctx=canvas.getContext('2d');
-    ctx.clearRect(0,0,canvas.width,canvas.height);
+    canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height);
     return;
   }
 
@@ -471,9 +575,179 @@ function renderProgChart(){
   document.getElementById('hist-list').innerHTML=hl;
 }
 
+/* ── Tab: Volumen ── */
+
+// Benchmarks cientificos por grupo muscular (series/semana)
+// Fuente: Israetel, Hoffman & Case — "Scientific Principles of Hypertrophy Training" (2019)
+//         Schoenfeld — "Science and Development of Muscle Hypertrophy" (2021)
+var VOL_BENCH={
+  push:{name:'Empuje',color:'#bf5af2',mev:8,mav:16,mrv:22},
+  pull:{name:'Traccion',color:'#30d158',mev:8,mav:16,mrv:22},
+  legs:{name:'Piernas',color:'#ff9f0a',mev:8,mav:16,mrv:22}
+};
+
+// Detecta si un dia se completo esta semana buscando el primer ejercicio con peso en el historial
+function dayDoneThisWeek(di){
+  var anchor=null;
+  D[di].s.some(function(sec){
+    return sec.e.some(function(ex){
+      if(ex.st>0&&ex.w!==null){anchor=ex.id;return true;}
+      return false;
+    });
+  });
+  return anchor&&(H[anchor]||[]).some(function(h){return isThisWeek(h.date);});
+}
+
+// Series por grupo muscular acumuladas esta semana
+function getThisWeekSets(){
+  var sets={};
+  D.forEach(function(dayData,di){
+    if(!dayDoneThisWeek(di))return;
+    dayData.s.forEach(function(sec){
+      sec.e.forEach(function(ex){
+        if(ex.st<=0||ex.w===null)return;
+        var grp=ex.dot.replace('d-','');
+        if(!VOL_BENCH[grp])return;
+        sets[grp]=(sets[grp]||0)+parseInt(ex.s);
+      });
+    });
+  });
+  return sets;
+}
+
+// Volumen de carga semanal (series x reps_media x kg) para el grafico de tendencia
+function getWeeklyTrend(){
+  var weeks={};
+  D.forEach(function(dayData){
+    dayData.s.forEach(function(sec){
+      sec.e.forEach(function(ex){
+        if(ex.st<=0||ex.w===null)return;
+        var reps=parseReps(ex.r),sets=parseInt(ex.s)||0;
+        (H[ex.id]||[]).forEach(function(h){
+          var wk=weekKey(h.date);
+          weeks[wk]=(weeks[wk]||0)+sets*reps*h.w;
+        });
+      });
+    });
+  });
+  var sorted=Object.keys(weeks).sort(function(a,b){return parseDate(a)-parseDate(b);});
+  return sorted.slice(-10).map(function(wk){return {week:wk,vol:Math.round(weeks[wk])};});
+}
+
+function renderVolume(){
+  var thisWeek=getThisWeekSets();
+  var trend=getWeeklyTrend();
+  var h='';
+
+  // Series por grupo esta semana
+  h+='<div class="vol-hdr">Esta semana &mdash; series por grupo</div>';
+  Object.keys(VOL_BENCH).forEach(function(grp){
+    var b=VOL_BENCH[grp];
+    var sets=thisWeek[grp]||0;
+    var pct=Math.min(sets/b.mrv*100,100);
+    var mevPct=b.mev/b.mrv*100;
+    var mavPct=b.mav/b.mrv*100;
+    var color=sets===0?'rgba(255,255,255,.12)':sets<b.mev?'#ff9f0a':sets<=b.mav?'#30d158':'#0a84ff';
+    var status=sets===0?'Sin sesion esta semana':sets<b.mev?'Por debajo del minimo efectivo (MEV)':sets<=b.mav?'Zona optima de hipertrofia (MAV) \u2713':'Alto \u2014 vigila la recuperacion';
+
+    h+='<div class="vol-card">';
+    h+='<div class="vol-row"><div class="vol-dot" style="background:'+b.color+'"></div>';
+    h+='<div class="vol-name">'+b.name+'</div>';
+    h+='<div class="vol-count">'+sets+' series</div></div>';
+    h+='<div class="vol-bar-wrap">';
+    h+='<div class="vol-bar" style="width:'+pct+'%;background:'+color+'"></div>';
+    h+='<div class="vol-marker" style="left:'+mevPct+'%"></div>';
+    h+='<div class="vol-marker" style="left:'+mavPct+'%"></div>';
+    h+='</div>';
+    h+='<div class="vol-status" style="color:'+color+'">'+status+'</div>';
+    h+='<div class="vol-leg"><span class="vol-leg-item">MEV '+b.mev+' series</span><span class="vol-leg-item">MAV '+b.mav+' series</span><span class="vol-leg-item" style="color:rgba(235,235,245,.25)">MRV '+b.mrv+'</span></div>';
+    h+='</div>';
+  });
+
+  // Grafico de tendencia de carga (si hay datos)
+  h+='<div class="vol-hdr" style="margin-top:16px">Carga total semanal (series &times; reps &times; kg)</div>';
+  if(trend.length>0){
+    h+='<div class="chart-container" id="vol-chart-box"><canvas id="vol-chart"></canvas></div>';
+  } else {
+    h+='<div class="no-data-box">Sin sesiones registradas aun.<br>Completa tu primera sesion para ver la tendencia.</div>';
+  }
+
+  // Insight cientifico
+  h+='<div class="sci-box"><div class="sci-title">Contexto cientifico</div><div class="sci-text">';
+  h+='<div class="sci-bullet"><span>&#8227;</span><span><strong>MEV (minimo efectivo):</strong> ~8 series/semana por grupo. Por debajo no hay estimulo suficiente para hipertrofia.</span></div>';
+  h+='<div class="sci-bullet"><span>&#8227;</span><span><strong>MAV (maximo adaptativo):</strong> 12-16 series. Aqui el musculo crece sin superar la capacidad de recuperacion.</span></div>';
+  h+='<div class="sci-bullet"><span>&#8227;</span><span><strong>MRV (maximo recuperable):</strong> ~22 series. Superarlo aumenta el riesgo de sobreentrenamiento sin ganancia extra.</span></div>';
+  h+='<div class="sci-bullet"><span>&#8227;</span><span>Este programa provee <strong>~18 series/semana</strong> por grupo al completar los 3 dias &mdash; zona MAV optima.</span></div>';
+
+  if(trend.length>1){
+    var first=trend[0].vol,last=trend[trend.length-1].vol;
+    if(first>0){
+      var pct=Math.round((last-first)/first*100);
+      var arrow=pct>=0?'&#8593;':'&#8595;';
+      var col=pct>=0?'#30d158':'#ff453a';
+      h+='<div class="sci-bullet" style="margin-top:6px"><span>&#8227;</span><span>Tu carga total ha variado <strong style="color:'+col+'">'+arrow+' '+Math.abs(pct)+'%</strong> desde tu primer registro.</span></div>';
+    }
+  }
+  h+='</div></div>';
+
+  document.getElementById('vol-content').innerHTML=h;
+
+  // Renderizar grafico de barras
+  if(trend.length>0){
+    var labels=trend.map(function(t){return fmtWeek(t.week);});
+    var vals=trend.map(function(t){return t.vol;});
+    if(volChart){volChart.destroy();volChart=null;}
+    volChart=new Chart(document.getElementById('vol-chart'),{
+      type:'bar',
+      data:{labels:labels,datasets:[{data:vals,backgroundColor:'rgba(232,213,176,0.15)',borderColor:'#e8d5b0',borderWidth:1.5,borderRadius:6}]},
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{backgroundColor:'#242426',titleColor:'rgba(235,235,245,.5)',bodyColor:'#e8d5b0',callbacks:{label:function(ctx){
+          var v=ctx.parsed.y;return v>=1000?(Math.round(v/100)/10)+' t·rep':v+' kg·rep';
+        }}}},
+        scales:{
+          x:{grid:{display:false},ticks:{color:'rgba(235,235,245,.35)',font:{size:10}}},
+          y:{grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'rgba(235,235,245,.35)',font:{size:10},callback:function(v){return v>=1000?Math.round(v/1000)+'k':v;}}}
+        }
+      }
+    });
+  }
+}
+
+/* ── Backup ── */
+function exportBackup(){
+  var data={v:1,fecha:new Date().toISOString(),W:W,H:H,R:R};
+  var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url;
+  a.download='nacho-entreno-'+new Date().toISOString().slice(0,10)+'.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(function(){URL.revokeObjectURL(url);},1000);
+}
+function importBackup(input){
+  var file=input.files[0];
+  if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      var d=JSON.parse(e.target.result);
+      if(d.W){W=d.W;autoSave();}
+      if(d.H){H=d.H;saveHistory();}
+      if(d.R){R=d.R;saveReady();}
+      input.value='';
+      alert('Datos restaurados correctamente.');
+      location.reload();
+    }catch(err){alert('Archivo no valido.');}
+  };
+  reader.readAsText(file);
+}
+
+/* ── Init ── */
 load();build(0);build(1);build(2);
 D.forEach(function(day){day.s.forEach(function(sec){sec.e.forEach(function(ex){if(ex.st>0&&ex.w!==null)applyReady(ex.id);});});});
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 </body>
 </html>
