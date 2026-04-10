@@ -54,8 +54,8 @@ body{font-family:-apple-system,sans-serif;background:#0a0a0a;color:#f2f2f7;-webk
 .sets-w{font-size:12px;color:rgba(235,235,245,.4);margin-top:2px}
 .chev{font-size:11px;color:rgba(235,235,245,.35);margin-left:3px;flex-shrink:0;transition:transform .2s;display:inline-block}
 .card.open .chev{transform:rotate(180deg)}
-.detail{display:none;padding:0 14px 14px;border-top:1px solid rgba(255,255,255,.07)}
-.card.open .detail{display:block}
+.detail{max-height:0;overflow:hidden;padding:0 14px;border-top:none;transition:max-height .32s cubic-bezier(.4,0,.2,1),padding .32s ease}
+.card.open .detail{max-height:900px;padding:0 14px 14px;border-top:1px solid rgba(255,255,255,.07)}
 .loc{background:#1c1c1e;border-radius:10px;padding:11px 13px;margin:12px 0 10px;border-left:3px solid #c9a96e}
 .loc-m{font-size:13px;font-weight:700;color:#e8d5b0;margin-bottom:5px}
 .loc-w{font-size:13px;color:rgba(235,235,245,.75);line-height:1.55}
@@ -116,8 +116,27 @@ body{font-family:-apple-system,sans-serif;background:#0a0a0a;color:#f2f2f7;-webk
 .hist-w{font-size:15px;font-weight:600;color:#e8d5b0}
 .card.ready{background:rgba(48,209,88,.08);border-color:rgba(48,209,88,.3)}
 .card.ready .sets-w{color:#30d158;font-weight:700}
-.card.ready .wt-val::before{content:"+"}
 .card.ready .ex-name{color:#30d158}
+
+/* ── Streak card ── */
+@keyframes fire-pulse{0%,100%{transform:scale(1) rotate(-3deg);}50%{transform:scale(1.18) rotate(3deg);}}
+@keyframes streak-in{0%{opacity:0;transform:translateY(8px) scale(.95);}100%{opacity:1;transform:translateY(0) scale(1);}}
+@keyframes glow-ring{0%,100%{box-shadow:0 0 0 0 rgba(255,159,10,.4);}50%{box-shadow:0 0 0 8px rgba(255,159,10,0);}}
+@keyframes count-pop{0%{transform:scale(1);}40%{transform:scale(1.25);}100%{transform:scale(1);}}
+.streak-wrap{margin:18px 20px 0;animation:streak-in .4s ease both;}
+.streak-card{background:linear-gradient(135deg,rgba(255,159,10,.13) 0%,rgba(255,69,0,.08) 100%);border:1px solid rgba(255,159,10,.25);border-radius:18px;padding:16px 20px;display:flex;align-items:center;gap:16px;position:relative;overflow:hidden;}
+.streak-card::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,159,10,.04),transparent);animation:glow-ring 3s ease-in-out infinite;}
+.streak-fire-big{font-size:36px;line-height:1;animation:fire-pulse 1.8s ease-in-out infinite;flex-shrink:0;filter:drop-shadow(0 0 8px rgba(255,140,0,.6));}
+.streak-center{flex:1}
+.streak-count{font-size:38px;font-weight:800;color:#ff9f0a;letter-spacing:-1.5px;line-height:1;display:inline-block;}
+.streak-count.pop{animation:count-pop .35s ease;}
+.streak-unit{font-size:13px;font-weight:700;color:rgba(255,159,10,.7);margin-left:3px;vertical-align:baseline;}
+.streak-label{font-size:12px;color:rgba(235,235,245,.4);margin-top:3px;letter-spacing:.01em;}
+.streak-badge{background:rgba(255,159,10,.15);border:1px solid rgba(255,159,10,.3);border-radius:10px;padding:4px 10px;font-size:11px;font-weight:700;color:#ff9f0a;white-space:nowrap;flex-shrink:0;}
+.streak-zero-card{background:#141414;border:1px solid rgba(255,255,255,.06);border-radius:18px;padding:14px 18px;display:flex;align-items:center;gap:12px;}
+.streak-zero-icon{font-size:24px;opacity:.4;}
+.streak-zero-txt{font-size:13px;color:rgba(235,235,245,.3);line-height:1.4;}
+.streak-zero-txt strong{color:rgba(235,235,245,.5);font-weight:600;}
 
 /* ── Segmented control ── */
 .seg{display:flex;background:#1c1c1e;border-radius:10px;padding:3px;margin:12px 0 16px}
@@ -154,14 +173,15 @@ body{font-family:-apple-system,sans-serif;background:#0a0a0a;color:#f2f2f7;-webk
 
 <div class="hdr">
   <div class="hdr-left">
-    <div class="eyebrow">Nacho &middot; Synergym</div>
-    <div class="title">Mi entreno</div>
+    <div class="title">Training Day</div>
     <div class="sub">3 dias &middot; Hipertrofia + correctivo hombro</div>
   </div>
   <div class="chart-icon" onclick="toggleProgress()">
     <svg viewBox="0 0 20 20" fill="none"><polyline points="2,15 7,9 11,12 18,4" stroke="#e8d5b0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7" cy="9" r="1.5" fill="#e8d5b0"/><circle cx="11" cy="12" r="1.5" fill="#e8d5b0"/><circle cx="18" cy="4" r="1.5" fill="#e8d5b0"/></svg>
   </div>
 </div>
+
+<div id="streak-display"></div>
 
 <div class="stats">
   <div class="stat daycard on" id="dc0" onclick="swDay(0)"><div class="stat-n">Dia 1</div><div class="stat-l">Empuje + Cuadriceps</div></div>
@@ -256,7 +276,7 @@ var D=[
    {id:"d1e0",n:"Jalon al pecho polea alta",m:"Technogym Lat Machine / Lat Pulldown",w2:"Maquina con barra larga curva colgada arriba y rodillos para los muslos. Zona de espalda.",dot:"d-pull",s:"3",r:"8-10",rir:"RIR 2-3",w:45,st:2.5,u:"kg",ch:[{t:"seguro hombro",c:"cg"}],wu:"1x10 al 50% (~22 kg). Activa el dorsal y prepara el hombro antes de cargar.",no:"Agarre prono ancho en la barra. Tira hasta la barbilla. Nunca por detras de la nuca.",pr:"Sube 2,5-5 kg al completar 3x10 con buena forma."},
    {id:"d1e1",n:"Remo polea baja agarre neutro",m:"Technogym Low Row",w2:"Maquina baja con asiento y apoyapies. Usa el accesorio triangular en V.",dot:"d-pull",s:"3",r:"10-12",rir:"RIR 2",w:35,st:2.5,u:"kg",ch:[],wu:null,no:"Espalda recta. Primero junta las escapulas, luego dobla los codos. No balancear el torso.",pr:"Sube 2,5 kg al completar 3x12."},
    {id:"d1e2",n:"Remo maquina pecho apoyado",m:"Technogym Chest Supported Row",w2:"Maquina donde el pecho se apoya en almohadilla inclinada.",dot:"d-pull",s:"3",r:"10-12",rir:"RIR 2",w:35,st:2.5,u:"kg",ch:[],wu:null,no:"Pecho apoyado estabiliza la espalda. Lleva codos hacia atras y arriba, pausa en retraccion maxima.",pr:"Sube 2,5-5 kg al completar 3x12."},
-   {id:"d1e3",n:"Hip thrust",m:"Banco plano + barra libre",w2:"Zona de peso libre. Hombros apoyados en borde del banco plano. Barra sobre las caderas con almohadilla.",dot:"d-legs",s:"3",r:"10-12",rir:"RIR 2",w:30,st:5,u:"kg",ch:[{t:"compuesto clave",c:"cp"}],wu:"1x10 al 50% (~15 kg). Activa el gluteo y comprueba la posicion antes de cargar fuerte.",no:"Pausa de 2 segundos arriba con el gluteo apretado. Pies a anchura de cadera, rodillas a 90 grados.",pr:"Sube 5 kg al completar 3x12 con pausa."},
+   {id:"d1e3",n:"Hip thrust",m:"Banco plano + barra libre",w2:"Zona de peso libre. Hombros apoyados en borde del banco plano. Barra sobre las caderas con almohadilla.",dot:"d-legs",s:"3",r:"10-12",rir:"RIR 2",w:30,st:5,u:"kg",ch:[{t:"compuesto clave",c:"cp"}],wu:"1x10 al 50% (~15 kg). Activa el gluteo y comprueba la posicion antes de cargar fuerte.",no:"Pausa de 2 segundos arriba con el gluteo apretado. Pies a anchura de cadera, rodillas a 90 grados. CLAVE HIPERLORDOSIS: al subir, mete el abdomen y haz una retroversion pelvica (inclina la pelvis hacia atras, como si quisieras meter el pubis hacia arriba). No hipextendas la lumbar arriba del todo. Si la zona lumbar se arquea al llegar arriba, estas haciendo el movimiento mal.",pr:"Sube 5 kg al completar 3x12 con pausa y retroversion controlada."},
    {id:"d1e4",n:"Curl femoral tumbado",m:"Technogym Leg Curl (boca abajo)",w2:"Maquina donde te tumbas boca abajo y curlas las piernas hacia el gluteo.",dot:"d-legs",s:"3",r:"10-12",rir:"RIR 2",w:37.5,st:2.5,u:"kg",ch:[],wu:null,no:"Baja lento: 3 segundos en la fase de bajada. Rango completo.",pr:"Sube 2,5-5 kg al completar 3x12."},
    {id:"d1e5",n:"Curl de biceps polea baja",m:"Technogym Cable Station, torre baja",w2:"Torre de poleas en posicion baja. Usa la barra corta recta o el accesorio EZ curvo.",dot:"d-pull",s:"3",r:"12-15",rir:"RIR 2",w:25,st:2.5,u:"kg",ch:[],wu:null,no:"Codo fijo a los costados. No balancear el torso. Aprieta el biceps arriba.",pr:"Sube 2,5 kg al completar 3x15."}
   ]},
@@ -272,14 +292,15 @@ var D=[
    {id:"d2e0",n:"Sentadilla en multipower",m:"Technogym Multipower (Smith Machine)",w2:"Barra fijada en railes verticales. Zona de peso libre. La barra pesa 10-15 kg sin discos.",dot:"d-legs",s:"3",r:"8-10",rir:"RIR 2-3",w:25,st:2.5,u:"kg en discos",ch:[{t:"compuesto clave",c:"cp"}],wu:"1x8 solo con la barra (sin discos). Activa el patron de sentadilla, calienta rodillas y caderas.",no:"Pies ligeramente por delante de la vertical de la barra. Profundidad progresiva.",pr:"Sube 2,5-5 kg por semana mientras la forma lo permita."},
    {id:"d2e1",n:"Jalon agarre neutro V-bar",m:"Technogym Lat Machine, accesorio V-bar",w2:"La misma maquina de jalon. Cambia la barra larga por el accesorio triangular en V.",dot:"d-pull",s:"3",r:"10-12",rir:"RIR 2",w:45,st:2.5,u:"kg",ch:[{t:"seguro hombro",c:"cg"}],wu:"1x10 al 50% (~22 kg). Activa el dorsal con agarre neutro antes de las series efectivas.",no:"Agarre neutro, palmas enfrentadas. Reduce tension en el hombro. Tira hasta el esternon.",pr:"Sube 2,5 kg al completar 3x12."},
    {id:"d2e2",n:"Press pecho mancuernas banco plano",m:"Mancuernas libres + banco plano",w2:"Zona de peso libre. Coge mancuernas de 14 kg del soporte. Tumba en un banco plano.",dot:"d-push",s:"3",r:"10-12",rir:"RIR 2",w:14,st:2,u:"kg c/u",ch:[{t:"seguro hombro",c:"cg"}],wu:null,no:"Codos a 30-45 grados del torso. No bajar las mancuernas mas alla del nivel del pecho.",pr:"Sube a mancuernas de 16 kg al completar 3x12."},
-   {id:"d2e3",n:"Curl femoral tumbado",m:"Technogym Leg Curl (boca abajo)",w2:"La misma maquina que el Dia 2. Segunda exposicion semanal con menos volumen.",dot:"d-legs",s:"3",r:"12-15",rir:"RIR 2-3",w:35,st:2.5,u:"kg",ch:[],wu:null,no:"Misma ejecucion que el Dia 2. Reduce el peso si notas fatiga acumulada.",pr:"Sube 2,5 kg al completar 3x15."},
+   {id:"d2e3",n:"Peso muerto rumano (RDL) mancuernas",m:"Mancuernas libres + zona de peso libre",w2:"Coge mancuernas de 14-16 kg del soporte. Ejecuta de pie con espalda neutra. Trabaja isquios en elongacion, complementa el curl femoral del Dia 2.",dot:"d-legs",s:"3",r:"10-12",rir:"RIR 2-3",w:14,st:2,u:"kg c/u",ch:[{t:"bisagra clave",c:"cp"}],wu:"1x8 con mancuernas ligeras (8 kg). Practica la bisagra de cadera antes de las series efectivas.",no:"Pies a anchura de cadera. Rodillas ligeramente flexionadas y fijas. Bisagra de cadera: empuja las caderas hacia atras bajando las mancuernas por las espinillas hasta notar tension en isquios. Espalda neutra en todo momento. No es una sentadilla.",pr:"Sube a 16 kg c/u al completar 3x12 con forma perfecta. Luego 18 kg."},
    {id:"d2e4",n:"Curl martillo con mancuernas",m:"Mancuernas libres",w2:"Zona de peso libre. Mancuernas de 10 kg. De pie o sentado en banco.",dot:"d-pull",s:"3",r:"12-15",rir:"RIR 2",w:10,st:2,u:"kg c/u",ch:[],wu:null,no:"Agarre neutro, palmas enfrentadas. Codo fijo al costado.",pr:"Sube a mancuernas de 12 kg al completar 3x15."},
    {id:"d2e5",n:"Extension triceps polea baja",m:"Technogym Cable Station, torre baja",w2:"Torre de poleas en posicion baja. Usa la barra EZ corta o la cuerda.",dot:"d-push",s:"3",r:"12-15",rir:"RIR 2",w:12.5,st:2.5,u:"kg",ch:[],wu:null,no:"El codo no se mueve. Tension constante en la polea, menos estres en el codo.",pr:"Sube 2,5 kg al completar 3x15."}
   ]},
   {l:"Correctivo hombro + Core (obligatorio)",r:true,e:[
    {id:"d2c0",n:"Rotacion interna isometrica en pared",m:"Sin equipamiento, solo una pared",w2:"Cualquier pared del gimnasio.",dot:"d-corr",s:"3",r:"10 seg",rir:"-",w:null,st:0,u:"corporal",ch:[{t:"correctivo",c:"co"}],wu:null,no:"Codo a 90 grados, antebrazo contra la pared. Empuja suavemente sin mover el brazo.",pr:"Aumenta la intensidad del empuje muy gradualmente."},
    {id:"d2c1",n:"Plancha frontal",m:"Esterilla en el suelo",w2:"Zona de estiramientos. Coge una esterilla del soporte.",dot:"d-core",s:"3",r:"30-45 seg",rir:"-",w:null,st:0,u:"corporal",ch:[{t:"core",c:"cp"}],wu:null,no:"Apoyo en antebrazos y puntas de los pies. Columna neutral. No hundir la cadera.",pr:"Aumenta 5 segundos por semana cuando aguantes sin temblar."},
-   {id:"d2c2",n:"Bird dog",m:"Esterilla en el suelo",w2:"Zona de estiramientos. A cuatro patas sobre la esterilla.",dot:"d-core",s:"3",r:"10 c/lado",rir:"-",w:null,st:0,u:"corporal",ch:[{t:"core",c:"cp"}],wu:null,no:"Extiende brazo derecho y pierna izquierda a la vez, lento. La cadera no rota. Alterna lados.",pr:"Cuando domines el movimiento, usa una goma ligera en los tobillos."}
+   {id:"d2c2",n:"Bird dog",m:"Esterilla en el suelo",w2:"Zona de estiramientos. A cuatro patas sobre la esterilla.",dot:"d-core",s:"3",r:"10 c/lado",rir:"-",w:null,st:0,u:"corporal",ch:[{t:"core",c:"cp"}],wu:null,no:"Extiende brazo derecho y pierna izquierda a la vez, lento. La cadera no rota. Alterna lados.",pr:"Cuando domines el movimiento, usa una goma ligera en los tobillos."},
+   {id:"d2c3",n:"Dead bug",m:"Esterilla en el suelo",w2:"Zona de estiramientos. Tumbado boca arriba sobre la esterilla.",dot:"d-core",s:"3",r:"8 c/lado",rir:"-",w:null,st:0,u:"corporal",ch:[{t:"hiperlordosis",c:"co"},{t:"anti-extension",c:"cp"}],wu:null,no:"Tumbado boca arriba, brazos al techo, rodillas a 90 grados en el aire. Baja brazo derecho y pierna izquierda SIMULTANEAMENTE hasta casi tocar el suelo sin que la lumbar se despegue de la esterilla. La lumbar pegada al suelo ES el ejercicio. Vuelve lento y alterna lados.",pr:"Domina 3x8 c/lado antes de progresar. Progresion: anade goma en los pies o mancuerna ligera en las manos."}
   ]}
  ]}
 ];
@@ -309,9 +330,10 @@ function gw(id,def){return W[id]!==undefined?W[id]:def;}
 function fmt(n){if(n===null||n===undefined)return '';return (n%1===0)?String(n):n.toFixed(1);}
 
 function parseReps(r){
-  var m=(r||'').match(/^(\d+)(?:-(\d+))?/);
+  var m=(r||'').match(/^(\d+(?:\.\d+)?)(?:-(\d+(?:\.\d+)?))?(?:\s|$)/);
   if(!m)return 0;
-  return m[2]?(parseInt(m[1])+parseInt(m[2]))/2:parseInt(m[1]);
+  var v=m[2]?(parseFloat(m[1])+parseFloat(m[2]))/2:parseFloat(m[1]);
+  return isNaN(v)?0:v;
 }
 function parseDate(s){
   var p=s.split('/');return new Date(+p[2],p[1]-1,+p[0]);
@@ -376,6 +398,14 @@ function applyReady(id){
   var card=el.closest('.card');
   if(!card)return;
   card.classList.toggle('ready',!!R[id]);
+  // Bug5: mostrar '+' solo si el peso actual supera el peso base del ejercicio
+  var exDef=null;
+  D.forEach(function(day){day.s.forEach(function(sec){sec.e.forEach(function(ex){if(ex.id===id)exDef=ex;});});});
+  if(exDef){
+    var cw=parseFloat(gw(id,exDef.w))||0;
+    var increased=R[id]&&cw>exDef.w;
+    el.textContent=(increased?"+":"")+fmt(cw);
+  }
 }
 function toggleReady(id){
   R[id]=!R[id];
@@ -399,9 +429,19 @@ function swDay(i){
 }
 
 /* ── Constructor de tarjetas de ejercicio ── */
+function refreshWeights(di){
+  D[di].s.forEach(function(sec){
+    sec.e.forEach(function(ex){
+      var hw=ex.st>0&&ex.w!==null;if(!hw)return;
+      var cw=gw(ex.id,ex.w);
+      var t=document.getElementById('wt'+ex.id);if(t)t.textContent=fmt(cw);
+      var i=document.getElementById('wi'+ex.id);if(i)i.value=fmt(cw);
+    });
+  });
+}
 function build(di){
   var cont=document.getElementById('c'+di);
-  if(cont.innerHTML.trim()!=='')return;
+  if(cont.innerHTML.trim()!==''){refreshWeights(di);return;}
   var day=D[di];var h='';
   for(var si=0;si<day.s.length;si++){
     var sec=day.s[si];
@@ -437,11 +477,9 @@ function build(di){
       h+='</div></div>';
     }
   }
-  if(di===2){
-    h+='<div class="alarm"><div class="alarm-t">Para el ejercicio si aparece:</div>';
-    ['Dolor agudo, punzante o irradiado al brazo','Debilidad subita o chasquido en el hombro','Dolor que no cede a los 10 min de reposo','Reproduccion del arco doloroso (60-120 grados)','Dolor nocturno que empeore tras la sesion'].forEach(function(t){h+='<div class="alarm-i">'+t+'</div>';});
-    h+='</div>';
-  }
+  h+='<div class="alarm"><div class="alarm-t">Para el ejercicio si aparece:</div>';
+  ['Dolor agudo, punzante o irradiado al brazo','Debilidad subita o chasquido en el hombro','Dolor que no cede a los 10 min de reposo','Reproduccion del arco doloroso (60-120 grados)','Dolor nocturno que empeore tras la sesion'].forEach(function(t){h+='<div class="alarm-i">'+t+'</div>';});
+  h+='</div>';
   h+='<button class="done-btn" onclick="openConfirm('+di+')">Sesion completada</button>';
   cont.innerHTML=h;
 }
@@ -471,6 +509,8 @@ function confirmDone(){
     }
   }
   saveHistory();
+  renderStreak();
+  setTimeout(function(){var n=document.getElementById('streak-num');if(n){n.classList.add('pop');setTimeout(function(){n.classList.remove('pop');},400);}},150);
   document.getElementById('confirm-content').style.display='none';
   document.getElementById('confirm-ok').style.display='block';
   setTimeout(function(){closeConfirm();},1800);
@@ -588,14 +628,12 @@ var VOL_BENCH={
 
 // Detecta si un dia se completo esta semana buscando el primer ejercicio con peso en el historial
 function dayDoneThisWeek(di){
-  var anchor=null;
-  D[di].s.some(function(sec){
+  return D[di].s.some(function(sec){
     return sec.e.some(function(ex){
-      if(ex.st>0&&ex.w!==null){anchor=ex.id;return true;}
-      return false;
+      if(ex.st<=0||ex.w===null)return false;
+      return (H[ex.id]||[]).some(function(h){return isThisWeek(h.date);});
     });
   });
-  return anchor&&(H[anchor]||[]).some(function(h){return isThisWeek(h.date);});
 }
 
 // Series por grupo muscular acumuladas esta semana
@@ -745,9 +783,81 @@ function importBackup(input){
   reader.readAsText(file);
 }
 
+/* ── Streak ── */
+function getWeeklySessionDates(){
+  // Recoge todas las fechas de sesion registradas (cualquier ejercicio con historial)
+  var allDates={};
+  D.forEach(function(dayData){
+    dayData.s.forEach(function(sec){
+      sec.e.forEach(function(ex){
+        (H[ex.id]||[]).forEach(function(h){
+          var wk=weekKey(h.date);
+          allDates[wk]=true;
+        });
+      });
+    });
+  });
+  return Object.keys(allDates).sort(function(a,b){return parseDate(a)-parseDate(b);});
+}
+
+function calcStreak(){
+  var weeks=getWeeklySessionDates();
+  if(!weeks.length)return 0;
+  // Semana actual
+  var now=new Date(),day=now.getDay();
+  var mon=new Date(now.getFullYear(),now.getMonth(),now.getDate()-day+(day===0?-6:1));
+  function toMon(wkStr){var p=wkStr.split('/');return new Date(+p[2],p[1]-1,+p[0]);}
+  var streak=0;
+  // Recorre hacia atras desde la semana actual
+  var cursor=new Date(mon);
+  for(var i=weeks.length-1;i>=0;i--){
+    var wMon=toMon(weeks[i]);
+    var diff=Math.round((cursor-wMon)/(7*86400000));
+    if(diff===0){streak++;cursor=new Date(cursor.getTime()-7*86400000);}
+    else if(diff===1&&streak===0){
+      // Semana actual sin sesion todavia — no rompe el streak
+      cursor=new Date(cursor.getTime()-7*86400000);
+      i++; // recheck same week entry
+    } else break;
+  }
+  return streak;
+}
+
+function getBadge(s){
+  if(s>=12)return'👑 Leyenda';
+  if(s>=8)return'💎 Elite';
+  if(s>=4)return'🔥 En racha';
+  if(s>=2)return'⚡ Constante';
+  return null;
+}
+function renderStreak(){
+  var el=document.getElementById('streak-display');
+  if(!el)return;
+  var s=calcStreak();
+  if(s>=1){
+    var badge=getBadge(s);
+    var badgeHtml=badge?'<div class="streak-badge">'+badge+'</div>':'';
+    var sublabel=s===1?'semana seguida':'semanas seguidas';
+    el.innerHTML='<div class="streak-wrap"><div class="streak-card">'
+      +'<div class="streak-fire-big">🔥</div>'
+      +'<div class="streak-center">'
+      +'<div><span class="streak-count" id="streak-num">'+s+'</span><span class="streak-unit">sem</span></div>'
+      +'<div class="streak-label">'+sublabel+' entrenando</div>'
+      +'</div>'
+      +badgeHtml
+      +'</div></div>';
+  } else {
+    el.innerHTML='<div class="streak-wrap"><div class="streak-zero-card">'
+      +'<div class="streak-zero-icon">⏳</div>'
+      +'<div class="streak-zero-txt"><strong>Sin racha todavia</strong><br>Completa esta semana para empezar</div>'
+      +'</div></div>';
+  }
+}
+
 /* ── Init ── */
 load();build(0);build(1);build(2);
 D.forEach(function(day){day.s.forEach(function(sec){sec.e.forEach(function(ex){if(ex.st>0&&ex.w!==null)applyReady(ex.id);});});});
+renderStreak();
 </script>
 </body>
 </html>
