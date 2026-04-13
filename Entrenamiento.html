@@ -114,6 +114,8 @@ body{font-family:-apple-system,sans-serif;background:#0a0a0a;color:#f2f2f7;-webk
 .hist-row{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-top:1px solid rgba(255,255,255,.06)}
 .hist-date{font-size:13px;color:rgba(235,235,245,.5)}
 .hist-w{font-size:15px;font-weight:600;color:#e8d5b0}
+.hist-del{background:none;border:none;color:rgba(255,69,58,.5);font-size:18px;cursor:pointer;padding:0 4px;margin-left:8px;line-height:1;-webkit-appearance:none}
+.hist-del:active{color:#ff453a}
 .card.ready{background:rgba(48,209,88,.08);border-color:rgba(48,209,88,.3)}
 .card.ready .sets-w{color:#30d158;font-weight:700}
 .card.ready .ex-name{color:#30d158}
@@ -167,6 +169,60 @@ body{font-family:-apple-system,sans-serif;background:#0a0a0a;color:#f2f2f7;-webk
 /* ── Backup ── */
 .backup-row{display:flex;gap:10px;margin-top:6px}
 .backup-btn{flex:1;padding:13px;background:#1c1c1e;border:1px solid rgba(255,255,255,.1);border-radius:12px;color:rgba(235,235,245,.5);font-family:-apple-system,sans-serif;font-size:13px;font-weight:600;cursor:pointer;-webkit-appearance:none;text-align:center;display:block;text-decoration:none}
+
+/* ── PR Board ── */
+.pr-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.pr-sum-card{background:#1c1c1e;border-radius:12px;padding:12px 10px;text-align:center;position:relative;overflow:hidden}
+.pr-sum-card.gold{background:linear-gradient(135deg,rgba(232,213,176,.12),rgba(201,169,110,.08));border:1px solid rgba(232,213,176,.2)}
+.pr-sum-v{font-size:24px;font-weight:800;color:#e8d5b0;line-height:1;letter-spacing:-.5px}
+.pr-sum-card.gold .pr-sum-v{color:#e8d5b0}
+.pr-sum-l{font-size:10px;color:rgba(235,235,245,.4);margin-top:4px;line-height:1.3;text-transform:uppercase;letter-spacing:.04em}
+.pr-sum-ico{font-size:14px;display:block;margin-bottom:4px}
+
+.pr-board{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.pr-card{background:#141414;border-radius:14px;border:1px solid rgba(255,255,255,.08);overflow:hidden;transition:border-color .2s}
+.pr-card.is-pr{border-color:rgba(48,209,88,.25)}
+.pr-card-head{display:flex;align-items:center;gap:10px;padding:14px;cursor:pointer;-webkit-user-select:none;user-select:none}
+.pr-card-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.pr-card-info{flex:1;min-width:0}
+.pr-card-name{font-size:14px;font-weight:600;color:#f2f2f7;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pr-card-sub{font-size:11px;color:rgba(235,235,245,.35);margin-top:2px}
+.pr-card-right{text-align:right;flex-shrink:0}
+.pr-card-weight{font-size:18px;font-weight:700;color:#e8d5b0;letter-spacing:-.3px}
+.pr-card.is-pr .pr-card-weight{color:#30d158}
+.pr-card-delta{font-size:11px;font-weight:600;margin-top:1px}
+.pr-card-delta.up{color:#30d158}
+.pr-card-delta.flat{color:rgba(235,235,245,.3)}
+.pr-card-delta.down{color:#ff453a}
+.pr-badge{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;color:#30d158;background:rgba(48,209,88,.12);padding:2px 7px;border-radius:6px;margin-left:6px;vertical-align:middle;letter-spacing:.02em}
+
+/* Gauge bar */
+.pr-gauge{padding:0 14px 12px}
+.pr-gauge-track{position:relative;height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:visible}
+.pr-gauge-fill{height:8px;border-radius:4px;transition:width .6s cubic-bezier(.16,1,.3,1);position:relative}
+.pr-gauge-fill.at-pr{background:linear-gradient(90deg,rgba(48,209,88,.4),#30d158)}
+.pr-gauge-fill.progressing{background:linear-gradient(90deg,rgba(232,213,176,.3),#e8d5b0)}
+.pr-gauge-fill.stagnant{background:rgba(255,255,255,.15)}
+.pr-gauge-pr-mark{position:absolute;top:-4px;width:2px;height:16px;background:#30d158;border-radius:1px;z-index:2}
+.pr-gauge-pr-label{position:absolute;top:-18px;font-size:9px;font-weight:700;color:#30d158;transform:translateX(-50%);white-space:nowrap}
+.pr-gauge-labels{display:flex;justify-content:space-between;margin-top:6px;font-size:10px;color:rgba(235,235,245,.25)}
+.pr-gauge-labels span:last-child{color:rgba(235,235,245,.45);font-weight:600}
+
+/* Expanded detail inside PR card */
+.pr-detail{max-height:0;overflow:hidden;transition:max-height .35s cubic-bezier(.4,0,.2,1)}
+.pr-card.expanded .pr-detail{max-height:600px}
+.pr-card.expanded{border-color:rgba(232,213,176,.25)}
+.pr-detail-inner{padding:0 14px 14px}
+.pr-detail-chart{position:relative;width:100%;height:180px;background:#1c1c1e;border-radius:10px;padding:10px;margin-bottom:10px}
+.pr-detail-hist{background:#1c1c1e;border-radius:10px;overflow:hidden}
+
+/* Empty state */
+.pr-empty{text-align:center;padding:40px 20px;color:rgba(235,235,245,.3);font-size:13px;line-height:1.7}
+.pr-empty-ico{font-size:36px;display:block;margin-bottom:10px;opacity:.5}
+
+/* Chevron */
+.pr-chev{font-size:10px;color:rgba(235,235,245,.25);transition:transform .2s;display:inline-block;margin-left:4px}
+.pr-card.expanded .pr-chev{transform:rotate(180deg)}
 </style>
 </head>
 <body>
@@ -190,9 +246,9 @@ body{font-family:-apple-system,sans-serif;background:#0a0a0a;color:#f2f2f7;-webk
 </div>
 
 <div id="screen-train" class="screen on">
-  <div id="p0" class="panel on"><div class="day-title">Empuje + Cuadriceps</div><div class="day-sub">Pecho &middot; Triceps &middot; Deltoides anterior &middot; Cuadriceps</div><div id="c0"></div></div>
-  <div id="p1" class="panel"><div class="day-title">Traccion + Gluteo</div><div class="day-sub">Dorsal &middot; Biceps &middot; Trapecio &middot; Isquiotibiales &middot; Gluteo</div><div id="c1"></div></div>
-  <div id="p2" class="panel"><div class="day-title">Full body + Correctivo</div><div class="day-sub">Compuestos globales &middot; Core &middot; Estabilizadores</div><div id="c2"></div></div>
+  <div id="p0" class="panel on"><div class="day-title">Empuje + Cuadriceps</div><div class="day-sub">Pecho &middot; Hombro &middot; Deltoides lateral &middot; Triceps &middot; Cuadriceps</div><div id="c0"></div></div>
+  <div id="p1" class="panel"><div class="day-title">Traccion + Gluteo</div><div class="day-sub">Dorsal &middot; Biceps &middot; Isquiotibiales &middot; Gluteo &middot; Abductor</div><div id="c1"></div></div>
+  <div id="p2" class="panel"><div class="day-title">Full body + Correctivo</div><div class="day-sub">Compuestos globales &middot; Deltoides lateral &middot; Core &middot; Estabilizadores</div><div id="c2"></div></div>
 </div>
 
 <div id="screen-progress" class="screen">
@@ -207,17 +263,8 @@ body{font-family:-apple-system,sans-serif;background:#0a0a0a;color:#f2f2f7;-webk
       <button class="seg-btn" id="tab-btn-peso" onclick="setProgTab('peso')">Peso</button>
     </div>
 
-    <!-- Tab: Peso -->
-    <div id="tab-peso" style="display:none">
-      <div class="ex-pills" id="prog-pills"></div>
-      <div class="prog-stats">
-        <div class="prog-stat"><div class="prog-stat-n" id="ps-inicio">—</div><div class="prog-stat-l">Inicio</div></div>
-        <div class="prog-stat"><div class="prog-stat-n" id="ps-actual">—</div><div class="prog-stat-l">Actual</div></div>
-        <div class="prog-stat"><div class="prog-stat-n green" id="ps-mejora">—</div><div class="prog-stat-l">Mejora</div></div>
-      </div>
-      <div class="chart-container"><canvas id="prog-chart"></canvas></div>
-      <div id="hist-list" class="hist-list"></div>
-    </div>
+    <!-- Tab: Peso (PR Board) -->
+    <div id="tab-peso" style="display:none"></div>
 
     <!-- Tab: Volumen -->
     <div id="tab-volumen">
@@ -260,13 +307,15 @@ var D=[
    {id:"d0e0",n:"Press de pecho maquina",m:"Technogym Chest Press",w2:"Zona de maquinas guiadas. Asiento regulable, palancas a los lados.",dot:"d-push",s:"3",r:"8-10",rir:"RIR 2-3",w:40,st:2.5,u:"kg",ch:[{t:"seguro hombro",c:"cg"}],wu:"1x10 al 50% (~20 kg). Activa el patron antes de las 3 series efectivas. No cuenta para el volumen.",no:"Agarre neutro, codos a 45 grados del torso. Espalda pegada al respaldo. Para si duele el hombro.",pr:"Sube 2,5 kg cuando completes 3x10 con RIR2 dos sesiones seguidas."},
    {id:"d0e1",n:"Press inclinado maquina (30 grados)",m:"Technogym Incline Chest Press",w2:"Maquina de pecho inclinada junto a la anterior. Respaldo a 30 grados.",dot:"d-push",s:"3",r:"10-12",rir:"RIR 2",w:22.5,st:2.5,u:"kg",ch:[{t:"seguro hombro",c:"cg"}],wu:null,no:"Angulo maximo 30 grados. El angulo bajo es mas seguro para el hombro.",pr:"Sube 2,5 kg al completar 3x12 limpio."},
    {id:"d0e2",n:"Press hombros maquina guiada",m:"Technogym Shoulder Press",w2:"Maquina con respaldo vertical y asas que suben recto. Cerca del press de pecho.",dot:"d-push",s:"3",r:"10-12",rir:"RIR 2-3",w:27.5,st:2.5,u:"kg",ch:[{t:"atencion: para si duele",c:"co"}],wu:null,no:"Recorrido fijo. Para inmediatamente si notas el arco doloroso entre 60 y 120 grados de subida.",pr:"Sube 2,5 kg al completar 3x12 con RIR2."},
-   {id:"d0e3",n:"Prensa de piernas",m:"Technogym Leg Press 45 grados",w2:"Zona de piernas. Maquina grande inclinada a 45 grados.",dot:"d-legs",s:"3",r:"10-12",rir:"RIR 2",w:55,st:5,u:"kg",ch:[{t:"compuesto clave",c:"cp"}],wu:"1x10 al 50% (~27 kg). Prepara rodillas y caderas. No cuenta para el volumen.",no:"Rango completo. Rodilla no se bloquea arriba. Pies a anchura de hombros.",pr:"Sube 5 kg al completar 3x12 con RIR2."},
+   {id:"d0e3",n:"Prensa de piernas",m:"Technogym Leg Press 45 grados",w2:"Zona de piernas. Maquina grande inclinada a 45 grados.",dot:"d-legs",s:"3",r:"10-12",rir:"RIR 2",w:55,st:5,u:"kg",ch:[{t:"compuesto clave",c:"cp"}],wu:"1x10 al 50% (~27 kg). Prepara rodillas y caderas. No cuenta para el volumen.",no:"Rango completo. Rodilla no se bloquea arriba. Pies a anchura de hombros. No hipextender la lumbar al subir.",pr:"Sube 5 kg al completar 3x12 con RIR2."},
    {id:"d0e4",n:"Extension de cuadriceps",m:"Technogym Leg Extension",w2:"Maquina con rodillo acolchado para las espinillas. Junto a la prensa.",dot:"d-legs",s:"3",r:"12-15",rir:"RIR 2",w:30,st:2.5,u:"kg",ch:[],wu:null,no:"Pausa de 1 segundo en extension maxima. Baja en 2-3 segundos.",pr:"Sube 2,5-5 kg al completar 3x15."},
-   {id:"d0e5",n:"Extension de triceps polea alta",m:"Technogym Cable Station, torre alta",w2:"Torre de poleas dobles. Pon el accesorio de cuerda o barra recta en la polea de arriba.",dot:"d-push",s:"3",r:"12-15",rir:"RIR 2",w:12.5,st:2.5,u:"kg",ch:[],wu:null,no:"Codo pegado al cuerpo y fijo. Solo se mueve el antebrazo hacia abajo.",pr:"Sube 2,5 kg al completar 3x15."}
+   {id:"d0e5",n:"Extension de triceps polea alta",m:"Technogym Cable Station, torre alta",w2:"Torre de poleas dobles. Pon el accesorio de cuerda o barra recta en la polea de arriba.",dot:"d-push",s:"3",r:"12-15",rir:"RIR 2",w:12.5,st:2.5,u:"kg",ch:[],wu:null,no:"Codo pegado al cuerpo y fijo. Solo se mueve el antebrazo hacia abajo.",pr:"Sube 2,5 kg al completar 3x15."},
+   {id:"d0e6",n:"Elevacion lateral con mancuerna",m:"Mancuernas ligeras",w2:"Zona de peso libre. Coge mancuernas de 5 kg del soporte. De pie.",dot:"d-push",s:"3",r:"12-15",rir:"RIR 2",w:5,st:2.5,u:"kg c/u",ch:[{t:"rango limitado 0-50°",c:"co"},{t:"deltoides lateral",c:"cp"}],wu:null,no:"CLAVE HOMBRO: eleva los brazos ligeramente POR DELANTE del plano del cuerpo (~30 grados hacia delante). Rango MAXIMO 50 grados de abduccion — NUNCA superar esa altura. Esto esquiva el arco doloroso (60-120 grados). Pulgar neutro o ligeramente hacia abajo. Pausa de 1 segundo arriba. Baja en 2-3 segundos. La mancuerna tiene maxima tension arriba, complementa el cable del Dia 3 que tiene tension constante.",pr:"Sube 2,5 kg al completar 3x15 con rango limpio. La tecnica importa mas que el peso."}
   ]},
-  {l:"Correctivo hombro (obligatorio)",r:true,e:[
-   {id:"d0c0",n:"Rotacion externa con goma",m:"Goma ligera o mancuerna 2-3 kg",w2:"Zona de accesorios.",dot:"d-corr",s:"3",r:"15",rir:"-",w:null,st:0,u:"muy ligero",ch:[{t:"correctivo",c:"co"}],wu:null,no:"Codo a 90 grados pegado al costado. Gira el antebrazo hacia fuera sin mover el codo.",pr:"No aumentar carga. La calidad del movimiento es lo importante."},
-   {id:"d0c1",n:"Face pull en polea alta",m:"Technogym Cable Station, torre alta",w2:"Misma torre de poleas que el triceps. Cambia el accesorio por la cuerda larga.",dot:"d-corr",s:"3",r:"15",rir:"-",w:null,st:0,u:"muy ligero",ch:[{t:"correctivo",c:"co"}],wu:null,no:"Tira hacia la cara separando las manos al llegar. Codos arriba y hacia atras. Pausa 1 segundo.",pr:"Ejercicio de salud del hombro, no de fuerza. No aumentar peso."}
+  {l:"Correctivo hombro + Core (obligatorio)",r:true,e:[
+   {id:"d0c0",n:"Rotacion externa con goma",m:"Goma ligera o mancuerna 2-3 kg",w2:"Zona de accesorios.",dot:"d-corr",s:"3",r:"15",rir:"-",w:null,st:0,u:"muy ligero",ch:[{t:"correctivo",c:"co"}],wu:null,no:"Codo a 90 grados pegado al costado. Gira el antebrazo hacia fuera sin mover el codo. Refuerza el infraespinoso — descomprime el espacio subacromial.",pr:"No aumentar carga. La calidad del movimiento es lo importante."},
+   {id:"d0c1",n:"Face pull en polea alta",m:"Technogym Cable Station, torre alta",w2:"Misma torre de poleas que el triceps. Cambia el accesorio por la cuerda larga.",dot:"d-corr",s:"3",r:"15",rir:"-",w:null,st:0,u:"muy ligero",ch:[{t:"correctivo",c:"co"}],wu:null,no:"Tira hacia la cara separando las manos al llegar. Codos arriba y hacia atras. Pausa 1 segundo.",pr:"Ejercicio de salud del hombro, no de fuerza. No aumentar peso."},
+   {id:"d0c2",n:"Dead bug",m:"Esterilla en el suelo",w2:"Zona de estiramientos. Tumbado boca arriba sobre la esterilla.",dot:"d-core",s:"2",r:"8 c/lado",rir:"-",w:null,st:0,u:"corporal",ch:[{t:"hiperlordosis",c:"co"},{t:"anti-extension",c:"cp"}],wu:null,no:"Tumbado boca arriba, brazos al techo, rodillas a 90 grados en el aire. Baja brazo derecho y pierna izquierda SIMULTANEAMENTE hasta casi tocar el suelo sin que la lumbar se despegue de la esterilla. La lumbar pegada al suelo ES el ejercicio. Vuelve lento y alterna lados.",pr:"Domina 2x8 c/lado antes de progresar. Progresion: anade goma en los pies o mancuerna ligera en las manos."}
   ]}
  ]},
 
@@ -276,31 +325,33 @@ var D=[
    {id:"d1e0",n:"Jalon al pecho polea alta",m:"Technogym Lat Machine / Lat Pulldown",w2:"Maquina con barra larga curva colgada arriba y rodillos para los muslos. Zona de espalda.",dot:"d-pull",s:"3",r:"8-10",rir:"RIR 2-3",w:45,st:2.5,u:"kg",ch:[{t:"seguro hombro",c:"cg"}],wu:"1x10 al 50% (~22 kg). Activa el dorsal y prepara el hombro antes de cargar.",no:"Agarre prono ancho en la barra. Tira hasta la barbilla. Nunca por detras de la nuca.",pr:"Sube 2,5-5 kg al completar 3x10 con buena forma."},
    {id:"d1e1",n:"Remo polea baja agarre neutro",m:"Technogym Low Row",w2:"Maquina baja con asiento y apoyapies. Usa el accesorio triangular en V.",dot:"d-pull",s:"3",r:"10-12",rir:"RIR 2",w:35,st:2.5,u:"kg",ch:[],wu:null,no:"Espalda recta. Primero junta las escapulas, luego dobla los codos. No balancear el torso.",pr:"Sube 2,5 kg al completar 3x12."},
    {id:"d1e2",n:"Remo maquina pecho apoyado",m:"Technogym Chest Supported Row",w2:"Maquina donde el pecho se apoya en almohadilla inclinada.",dot:"d-pull",s:"3",r:"10-12",rir:"RIR 2",w:35,st:2.5,u:"kg",ch:[],wu:null,no:"Pecho apoyado estabiliza la espalda. Lleva codos hacia atras y arriba, pausa en retraccion maxima.",pr:"Sube 2,5-5 kg al completar 3x12."},
-   {id:"d1e3",n:"Hip thrust",m:"Banco plano + barra libre",w2:"Zona de peso libre. Hombros apoyados en borde del banco plano. Barra sobre las caderas con almohadilla.",dot:"d-legs",s:"3",r:"10-12",rir:"RIR 2",w:30,st:5,u:"kg",ch:[{t:"compuesto clave",c:"cp"}],wu:"1x10 al 50% (~15 kg). Activa el gluteo y comprueba la posicion antes de cargar fuerte.",no:"Pausa de 2 segundos arriba con el gluteo apretado. Pies a anchura de cadera, rodillas a 90 grados. CLAVE HIPERLORDOSIS: al subir, mete el abdomen y haz una retroversion pelvica (inclina la pelvis hacia atras, como si quisieras meter el pubis hacia arriba). No hipextendas la lumbar arriba del todo. Si la zona lumbar se arquea al llegar arriba, estas haciendo el movimiento mal.",pr:"Sube 5 kg al completar 3x12 con pausa y retroversion controlada."},
+   {id:"d1e3",n:"Hip thrust",m:"Banco plano + barra libre",w2:"Zona de peso libre. Hombros apoyados en borde del banco plano. Barra sobre las caderas con almohadilla.",dot:"d-legs",s:"3",r:"10-12",rir:"RIR 2",w:30,st:5,u:"kg",ch:[{t:"compuesto clave",c:"cp"},{t:"hiperlordosis",c:"co"}],wu:"1x10 al 50% (~15 kg). Activa el gluteo y comprueba la posicion antes de cargar fuerte.",no:"Pausa de 2 segundos arriba con el gluteo apretado. Pies a anchura de cadera, rodillas a 90 grados. CLAVE HIPERLORDOSIS: al subir, mete el abdomen y haz una retroversion pelvica (inclina la pelvis hacia atras, como si quisieras meter el pubis hacia arriba). No hipextendas la lumbar arriba del todo. Si la zona lumbar se arquea al llegar arriba, estas haciendo el movimiento mal.",pr:"Sube 5 kg al completar 3x12 con pausa y retroversion controlada."},
    {id:"d1e4",n:"Curl femoral tumbado",m:"Technogym Leg Curl (boca abajo)",w2:"Maquina donde te tumbas boca abajo y curlas las piernas hacia el gluteo.",dot:"d-legs",s:"3",r:"10-12",rir:"RIR 2",w:37.5,st:2.5,u:"kg",ch:[],wu:null,no:"Baja lento: 3 segundos en la fase de bajada. Rango completo.",pr:"Sube 2,5-5 kg al completar 3x12."},
-   {id:"d1e5",n:"Curl de biceps polea baja",m:"Technogym Cable Station, torre baja",w2:"Torre de poleas en posicion baja. Usa la barra corta recta o el accesorio EZ curvo.",dot:"d-pull",s:"3",r:"12-15",rir:"RIR 2",w:25,st:2.5,u:"kg",ch:[],wu:null,no:"Codo fijo a los costados. No balancear el torso. Aprieta el biceps arriba.",pr:"Sube 2,5 kg al completar 3x15."}
+   {id:"d1e5",n:"Curl de biceps polea baja",m:"Technogym Cable Station, torre baja",w2:"Torre de poleas en posicion baja. Usa la barra corta recta o el accesorio EZ curvo.",dot:"d-pull",s:"3",r:"12-15",rir:"RIR 2",w:25,st:2.5,u:"kg",ch:[],wu:null,no:"Codo fijo a los costados. No balancear el torso. Aprieta el biceps arriba.",pr:"Sube 2,5 kg al completar 3x15."},
+   {id:"d1e6",n:"Abduccion de cadera en maquina",m:"Technogym Hip Abduction",w2:"Maquina sentada con almohadillas laterales en las rodillas. Zona de piernas.",dot:"d-legs",s:"3",r:"12-15",rir:"RIR 2",w:35,st:5,u:"kg",ch:[{t:"gluteo medio",c:"cp"}],wu:null,no:"Abre las piernas contra la resistencia. Pausa de 1 segundo en maxima apertura. Controla el retorno en 2-3 segundos. Inclinate ligeramente hacia delante para mayor activacion del gluteo medio.",pr:"Sube 5 kg al completar 3x15."}
   ]},
-  {l:"Correctivo hombro (obligatorio)",r:true,e:[
-   {id:"d1c0",n:"Retraccion escapular en polea",m:"Technogym Cable Station, torre media",w2:"Torre de poleas a la altura del pecho. Accesorio en V o barra corta.",dot:"d-corr",s:"3",r:"15",rir:"-",w:null,st:0,u:"muy ligero",ch:[{t:"correctivo",c:"co"}],wu:null,no:"Brazos casi extendidos. Solo juntar las escapulas por detras.",pr:"Activacion pura. Peso minimo siempre."},
-   {id:"d1c1",n:"Face pull en polea alta",m:"Technogym Cable Station, torre alta",w2:"Igual que el Dia 1. Polea alta con accesorio de cuerda larga.",dot:"d-corr",s:"3",r:"15",rir:"-",w:null,st:0,u:"muy ligero",ch:[{t:"correctivo",c:"co"}],wu:null,no:"Tira hacia la cara, codos arriba, separa las manos. Pausa 1 segundo.",pr:"Pilar de recuperacion del manguito. Nunca saltarselo."}
+  {l:"Correctivo hombro + Core (obligatorio)",r:true,e:[
+   {id:"d1c0",n:"Retraccion escapular en polea",m:"Technogym Cable Station, torre media",w2:"Torre de poleas a la altura del pecho. Accesorio en V o barra corta.",dot:"d-corr",s:"3",r:"15",rir:"-",w:null,st:0,u:"muy ligero",ch:[{t:"correctivo",c:"co"}],wu:null,no:"Brazos casi extendidos. Solo juntar las escapulas por detras. Estabiliza la escapula — fundamental para el hombro.",pr:"Activacion pura. Peso minimo siempre."},
+   {id:"d1c1",n:"Face pull en polea alta",m:"Technogym Cable Station, torre alta",w2:"Igual que el Dia 1. Polea alta con accesorio de cuerda larga.",dot:"d-corr",s:"3",r:"15",rir:"-",w:null,st:0,u:"muy ligero",ch:[{t:"correctivo",c:"co"}],wu:null,no:"Tira hacia la cara, codos arriba, separa las manos. Pausa 1 segundo.",pr:"Pilar de recuperacion del manguito. Nunca saltarselo."},
+   {id:"d1c2",n:"Plancha frontal",m:"Esterilla en el suelo",w2:"Zona de estiramientos. Coge una esterilla del soporte.",dot:"d-core",s:"2",r:"30-45 seg",rir:"-",w:null,st:0,u:"corporal",ch:[{t:"hiperlordosis",c:"co"},{t:"core",c:"cp"}],wu:null,no:"Apoyo en antebrazos y puntas de los pies. CLAVE: aprieta el gluteo y mete el abdomen para mantener la pelvis en retroversion. No hundir la cadera ni sacar el culo. Columna totalmente neutral.",pr:"Aumenta 5 segundos por semana cuando aguantes sin temblar."}
   ]}
  ]},
 
  /* ── DIA 3: Full body + Correctivo ── */
  {s:[
   {l:"Bloque principal",r:false,e:[
-   {id:"d2e0",n:"Sentadilla en multipower",m:"Technogym Multipower (Smith Machine)",w2:"Barra fijada en railes verticales. Zona de peso libre. La barra pesa 10-15 kg sin discos.",dot:"d-legs",s:"3",r:"8-10",rir:"RIR 2-3",w:25,st:2.5,u:"kg en discos",ch:[{t:"compuesto clave",c:"cp"}],wu:"1x8 solo con la barra (sin discos). Activa el patron de sentadilla, calienta rodillas y caderas.",no:"Pies ligeramente por delante de la vertical de la barra. Profundidad progresiva.",pr:"Sube 2,5-5 kg por semana mientras la forma lo permita."},
+   {id:"d2e0",n:"Sentadilla en multipower",m:"Technogym Multipower (Smith Machine)",w2:"Barra fijada en railes verticales. Zona de peso libre. La barra pesa 10-15 kg sin discos.",dot:"d-legs",s:"3",r:"8-10",rir:"RIR 2-3",w:25,st:2.5,u:"kg en discos",ch:[{t:"compuesto clave",c:"cp"}],wu:"1x8 solo con la barra (sin discos). Activa el patron de sentadilla, calienta rodillas y caderas.",no:"Pies ligeramente por delante de la vertical de la barra. Profundidad progresiva. No hipextender la lumbar arriba.",pr:"Sube 2,5-5 kg por semana mientras la forma lo permita."},
    {id:"d2e1",n:"Jalon agarre neutro V-bar",m:"Technogym Lat Machine, accesorio V-bar",w2:"La misma maquina de jalon. Cambia la barra larga por el accesorio triangular en V.",dot:"d-pull",s:"3",r:"10-12",rir:"RIR 2",w:45,st:2.5,u:"kg",ch:[{t:"seguro hombro",c:"cg"}],wu:"1x10 al 50% (~22 kg). Activa el dorsal con agarre neutro antes de las series efectivas.",no:"Agarre neutro, palmas enfrentadas. Reduce tension en el hombro. Tira hasta el esternon.",pr:"Sube 2,5 kg al completar 3x12."},
-   {id:"d2e2",n:"Press pecho mancuernas banco plano",m:"Mancuernas libres + banco plano",w2:"Zona de peso libre. Coge mancuernas de 14 kg del soporte. Tumba en un banco plano.",dot:"d-push",s:"3",r:"10-12",rir:"RIR 2",w:14,st:2,u:"kg c/u",ch:[{t:"seguro hombro",c:"cg"}],wu:null,no:"Codos a 30-45 grados del torso. No bajar las mancuernas mas alla del nivel del pecho.",pr:"Sube a mancuernas de 16 kg al completar 3x12."},
-   {id:"d2e3",n:"Peso muerto rumano (RDL) mancuernas",m:"Mancuernas libres + zona de peso libre",w2:"Coge mancuernas de 14-16 kg del soporte. Ejecuta de pie con espalda neutra. Trabaja isquios en elongacion, complementa el curl femoral del Dia 2.",dot:"d-legs",s:"3",r:"10-12",rir:"RIR 2-3",w:14,st:2,u:"kg c/u",ch:[{t:"bisagra clave",c:"cp"}],wu:"1x8 con mancuernas ligeras (8 kg). Practica la bisagra de cadera antes de las series efectivas.",no:"Pies a anchura de cadera. Rodillas ligeramente flexionadas y fijas. Bisagra de cadera: empuja las caderas hacia atras bajando las mancuernas por las espinillas hasta notar tension en isquios. Espalda neutra en todo momento. No es una sentadilla.",pr:"Sube a 16 kg c/u al completar 3x12 con forma perfecta. Luego 18 kg."},
-   {id:"d2e4",n:"Curl martillo con mancuernas",m:"Mancuernas libres",w2:"Zona de peso libre. Mancuernas de 10 kg. De pie o sentado en banco.",dot:"d-pull",s:"3",r:"12-15",rir:"RIR 2",w:10,st:2,u:"kg c/u",ch:[],wu:null,no:"Agarre neutro, palmas enfrentadas. Codo fijo al costado.",pr:"Sube a mancuernas de 12 kg al completar 3x15."},
-   {id:"d2e5",n:"Extension triceps polea baja",m:"Technogym Cable Station, torre baja",w2:"Torre de poleas en posicion baja. Usa la barra EZ corta o la cuerda.",dot:"d-push",s:"3",r:"12-15",rir:"RIR 2",w:12.5,st:2.5,u:"kg",ch:[],wu:null,no:"El codo no se mueve. Tension constante en la polea, menos estres en el codo.",pr:"Sube 2,5 kg al completar 3x15."}
+   {id:"d2e2",n:"Press pecho mancuernas banco plano",m:"Mancuernas libres + banco plano",w2:"Zona de peso libre. Coge mancuernas de 14 kg del soporte. Tumba en un banco plano.",dot:"d-push",s:"3",r:"10-12",rir:"RIR 2",w:14,st:2.5,u:"kg c/u",ch:[{t:"seguro hombro",c:"cg"}],wu:null,no:"Codos a 30-45 grados del torso. No bajar las mancuernas mas alla del nivel del pecho.",pr:"Sube 2,5 kg al completar 3x12."},
+   {id:"d2e3",n:"Peso muerto rumano (RDL) mancuernas",m:"Mancuernas libres + zona de peso libre",w2:"Coge mancuernas de 14-16 kg del soporte. Ejecuta de pie con espalda neutra. Trabaja isquios en elongacion, complementa el curl femoral del Dia 2.",dot:"d-legs",s:"3",r:"10-12",rir:"RIR 2-3",w:14,st:2.5,u:"kg c/u",ch:[{t:"bisagra clave",c:"cp"}],wu:"1x8 con mancuernas ligeras (8 kg). Practica la bisagra de cadera antes de las series efectivas.",no:"Pies a anchura de cadera. Rodillas ligeramente flexionadas y fijas. Bisagra de cadera: empuja las caderas hacia atras bajando las mancuernas por las espinillas hasta notar tension en isquios. Espalda neutra en todo momento. No es una sentadilla.",pr:"Sube 2,5 kg c/u al completar 3x12 con forma perfecta."},
+   {id:"d2e4",n:"Curl martillo con mancuernas",m:"Mancuernas libres",w2:"Zona de peso libre. Mancuernas de 10 kg. De pie o sentado en banco.",dot:"d-pull",s:"3",r:"12-15",rir:"RIR 2",w:10,st:2.5,u:"kg c/u",ch:[],wu:null,no:"Agarre neutro, palmas enfrentadas. Codo fijo al costado.",pr:"Sube 2,5 kg al completar 3x15."},
+   {id:"d2e5",n:"Extension triceps polea baja",m:"Technogym Cable Station, torre baja",w2:"Torre de poleas en posicion baja. Usa la barra EZ corta o la cuerda.",dot:"d-push",s:"3",r:"12-15",rir:"RIR 2",w:12.5,st:2.5,u:"kg",ch:[],wu:null,no:"El codo no se mueve. Tension constante en la polea, menos estres en el codo.",pr:"Sube 2,5 kg al completar 3x15."},
+   {id:"d2e6",n:"Elevacion lateral en cable",m:"Technogym Cable Station, torre baja",w2:"Torre de poleas en posicion baja. Sin accesorio: agarra el mosqueton o la bola con la mano del lado contrario.",dot:"d-push",s:"3",r:"12-15",rir:"RIR 2",w:5,st:2.5,u:"kg",ch:[{t:"rango limitado 0-50°",c:"co"},{t:"deltoides lateral",c:"cp"}],wu:null,no:"CLAVE HOMBRO: eleva el brazo ligeramente POR DELANTE del plano del cuerpo (~30 grados hacia delante). Rango MAXIMO 50 grados de abduccion — NUNCA superar esa altura. Pulgar neutro o ligeramente hacia abajo. Pausa de 1 segundo arriba. Controla la bajada.",pr:"Sube 2,5 kg al completar 3x15 con rango limpio. La tecnica importa mas que el peso."}
   ]},
   {l:"Correctivo hombro + Core (obligatorio)",r:true,e:[
-   {id:"d2c0",n:"Rotacion interna isometrica en pared",m:"Sin equipamiento, solo una pared",w2:"Cualquier pared del gimnasio.",dot:"d-corr",s:"3",r:"10 seg",rir:"-",w:null,st:0,u:"corporal",ch:[{t:"correctivo",c:"co"}],wu:null,no:"Codo a 90 grados, antebrazo contra la pared. Empuja suavemente sin mover el brazo.",pr:"Aumenta la intensidad del empuje muy gradualmente."},
-   {id:"d2c1",n:"Plancha frontal",m:"Esterilla en el suelo",w2:"Zona de estiramientos. Coge una esterilla del soporte.",dot:"d-core",s:"3",r:"30-45 seg",rir:"-",w:null,st:0,u:"corporal",ch:[{t:"core",c:"cp"}],wu:null,no:"Apoyo en antebrazos y puntas de los pies. Columna neutral. No hundir la cadera.",pr:"Aumenta 5 segundos por semana cuando aguantes sin temblar."},
-   {id:"d2c2",n:"Bird dog",m:"Esterilla en el suelo",w2:"Zona de estiramientos. A cuatro patas sobre la esterilla.",dot:"d-core",s:"3",r:"10 c/lado",rir:"-",w:null,st:0,u:"corporal",ch:[{t:"core",c:"cp"}],wu:null,no:"Extiende brazo derecho y pierna izquierda a la vez, lento. La cadera no rota. Alterna lados.",pr:"Cuando domines el movimiento, usa una goma ligera en los tobillos."},
-   {id:"d2c3",n:"Dead bug",m:"Esterilla en el suelo",w2:"Zona de estiramientos. Tumbado boca arriba sobre la esterilla.",dot:"d-core",s:"3",r:"8 c/lado",rir:"-",w:null,st:0,u:"corporal",ch:[{t:"hiperlordosis",c:"co"},{t:"anti-extension",c:"cp"}],wu:null,no:"Tumbado boca arriba, brazos al techo, rodillas a 90 grados en el aire. Baja brazo derecho y pierna izquierda SIMULTANEAMENTE hasta casi tocar el suelo sin que la lumbar se despegue de la esterilla. La lumbar pegada al suelo ES el ejercicio. Vuelve lento y alterna lados.",pr:"Domina 3x8 c/lado antes de progresar. Progresion: anade goma en los pies o mancuerna ligera en las manos."}
+   {id:"d2c0",n:"Face pull en polea alta",m:"Technogym Cable Station, torre alta",w2:"Polea alta con accesorio de cuerda larga.",dot:"d-corr",s:"3",r:"15",rir:"-",w:null,st:0,u:"muy ligero",ch:[{t:"correctivo",c:"co"}],wu:null,no:"Tira hacia la cara, codos arriba, separa las manos. Pausa 1 segundo. Presente en los 3 dias porque es el pilar de rehabilitacion del manguito.",pr:"Ejercicio de salud del hombro, no de fuerza. No aumentar peso."},
+   {id:"d2c1",n:"Rotacion externa con goma",m:"Goma ligera o mancuerna 2-3 kg",w2:"Zona de accesorios.",dot:"d-corr",s:"3",r:"15",rir:"-",w:null,st:0,u:"muy ligero",ch:[{t:"correctivo",c:"co"}],wu:null,no:"Codo a 90 grados pegado al costado. Gira el antebrazo hacia fuera sin mover el codo. Refuerza el infraespinoso.",pr:"No aumentar carga. La calidad del movimiento es lo importante."},
+   {id:"d2c2",n:"Bird dog",m:"Esterilla en el suelo",w2:"Zona de estiramientos. A cuatro patas sobre la esterilla.",dot:"d-core",s:"2",r:"10 c/lado",rir:"-",w:null,st:0,u:"corporal",ch:[{t:"hiperlordosis",c:"co"},{t:"core",c:"cp"}],wu:null,no:"Extiende brazo derecho y pierna izquierda a la vez, lento. La cadera no rota. CLAVE: manten la lumbar neutral durante todo el movimiento — ni hundirla ni arquearla. Alterna lados.",pr:"Cuando domines el movimiento, usa una goma ligera en los tobillos."}
   ]}
  ]}
 ];
@@ -362,6 +413,7 @@ function adj(id,def,st,dir){
   W[id]=n;
   var i=document.getElementById('wi'+id);if(i)i.value=fmt(n);
   var t=document.getElementById('wt'+id);if(t)t.textContent=fmt(n);
+  var minBtn=document.getElementById('sm'+id);if(minBtn)minBtn.style.opacity=n<=0?'.3':'1';
   autoSave();
 }
 function wchange(id,val){
@@ -376,18 +428,29 @@ function wchange(id,val){
 }
 
 /* ── Tarjetas ── */
-var holdTimer=null;var holdTarget=null;var holdFired=false;
+var holdTimer=null;var holdTarget=null;var holdFired=false;var holdStartX=0;var holdStartY=0;
 
-function tog(el){if(holdFired){holdFired=false;return;}el.closest('.card').classList.toggle('open');}
+function tog(el){
+  if(holdFired){holdFired=false;return;}
+  var card=el.closest('.card');var wasOpen=card.classList.contains('open');
+  card.closest('.panel,.screen').querySelectorAll('.card.open').forEach(function(c){c.classList.remove('open');});
+  if(!wasOpen){card.classList.add('open');setTimeout(function(){card.scrollIntoView({behavior:'smooth',block:'nearest'});},340);}
+}
 
 function startHold(e,id){
   holdFired=false;
   holdTarget=id;
+  holdStartX=e.clientX||0;holdStartY=e.clientY||0;
   holdTimer=setTimeout(function(){
     holdFired=true;
     toggleReady(id);
     holdTarget=null;
   },500);
+}
+function moveHold(e){
+  if(!holdTimer)return;
+  var dx=Math.abs((e.clientX||0)-holdStartX),dy=Math.abs((e.clientY||0)-holdStartY);
+  if(dx>10||dy>10)cancelHold();
 }
 function cancelHold(){
   if(holdTimer){clearTimeout(holdTimer);holdTimer=null;}
@@ -452,7 +515,7 @@ function build(di){
       var chips='';
       for(var ci=0;ci<ex.ch.length;ci++){chips+='<span class="chip '+ex.ch[ci].c+'">'+ex.ch[ci].t+'</span>';}
       h+='<div class="card">';
-      h+='<div class="card-row" onclick="tog(this)" oncontextmenu="return false" onpointerdown="startHold(event,\''+ex.id+'\')" onpointerup="cancelHold()" onpointerleave="cancelHold()" onpointercancel="cancelHold()">';
+      h+='<div class="card-row" onclick="tog(this)" oncontextmenu="return false" onpointerdown="startHold(event,\''+ex.id+'\')" onpointermove="moveHold(event)" onpointerup="cancelHold()" onpointerleave="cancelHold()" onpointercancel="cancelHold()">';
       h+='<div class="dot '+ex.dot+'"></div>';
       h+='<div class="card-text"><div class="ex-name">'+ex.n+'</div><div class="ex-mach">'+ex.m+'</div>';
       if(chips)h+='<div class="chips">'+chips+'</div>';
@@ -468,7 +531,7 @@ function build(di){
       h+='<div class="met"><div class="met-v">'+ex.rir+'</div><div class="met-l">RIR</div></div></div>';
       if(hw){
         h+='<div class="weditor"><div class="wed-lbl">Peso de trabajo</div><div class="stepper">';
-        h+='<button class="sbtn" onclick="adj(\''+ex.id+'\','+ex.w+','+ex.st+',-1)">&#8722;</button>';
+        h+='<button class="sbtn" id="sm'+ex.id+'" onclick="adj(\''+ex.id+'\','+ex.w+','+ex.st+',-1)"'+(cw<=0?' style="opacity:.3"':'')+'>&#8722;</button>';
         h+='<div class="wdisp"><input class="winput" id="wi'+ex.id+'" type="number" inputmode="decimal" value="'+fmt(cw)+'" step="'+ex.st+'" onchange="wchange(\''+ex.id+'\',this.value)"><span class="wunit">'+ex.u+'</span></div>';
         h+='<button class="sbtn" onclick="adj(\''+ex.id+'\','+ex.w+','+ex.st+',1)">+</button>';
         h+='</div></div>';
@@ -485,7 +548,9 @@ function build(di){
 }
 
 /* ── Confirmacion de sesion ── */
+var _confirmDay=0;
 function openConfirm(di){
+  _confirmDay=di;
   var names=['Dia 1 — Empuje','Dia 2 — Traccion','Dia 3 — Full body'];
   document.getElementById('confirm-sub').textContent='Se guardara el progreso de '+names[di]+'. Solo confirma cuando hayas terminado el entreno.';
   document.getElementById('confirm-content').style.display='block';
@@ -496,7 +561,7 @@ function closeConfirm(){document.getElementById('confirm-overlay').classList.rem
 function confirmDone(){
   var date=new Date();
   var label=date.getDate()+'/'+(date.getMonth()+1)+'/'+date.getFullYear();
-  var day=D[currentDay];
+  var day=D[_confirmDay];
   for(var si=0;si<day.s.length;si++){
     for(var ei=0;ei<day.s[si].e.length;ei++){
       var ex=day.s[si].e[ei];
@@ -504,12 +569,14 @@ function confirmDone(){
         var cw=gw(ex.id,ex.w);
         if(!H[ex.id])H[ex.id]=[];
         var last=H[ex.id][H[ex.id].length-1];
-        if(!last||last.date!==label||last.w!==cw)H[ex.id].push({date:label,w:cw});
+        if(last&&last.date===label){last.w=cw;}
+        else{H[ex.id].push({date:label,w:cw});}
       }
     }
   }
   saveHistory();
   renderStreak();
+  if(navigator.vibrate)navigator.vibrate([50,30,50]);
   setTimeout(function(){var n=document.getElementById('streak-num');if(n){n.classList.add('pop');setTimeout(function(){n.classList.remove('pop');},400);}},150);
   document.getElementById('confirm-content').style.display='none';
   document.getElementById('confirm-ok').style.display='block';
@@ -554,65 +621,199 @@ function setProgTab(tab){
   document.getElementById('tab-peso').style.display=tab==='peso'?'':'none';
   document.getElementById('tab-volumen').style.display=tab==='volumen'?'':'none';
   if(tab==='volumen')renderVolume();
+  if(tab==='peso')renderPesoTab();
 }
 
-/* ── Tab: Peso ── */
+/* ── Tab: Peso (PR Board) ── */
+var _expandedPrEx=null;
+var _prDetailChart=null;
+
 function renderProgDay(){
-  if(progTab==='volumen'){renderVolume();return;}
-  buildProgPills();
-  renderProgChart();
+  if(progTab==='volumen'){renderVolume();}
+  else{renderPesoTab();}
 }
-function buildProgPills(){
-  var exs=getDayExs(progDay);
-  var c=document.getElementById('prog-pills');
-  c.innerHTML='';
-  exs.forEach(function(ex,i){
-    var b=document.createElement('button');
-    b.className='ex-pill'+(i===progExIdx?' on':'');
-    b.textContent=ex.n;
-    b.onclick=function(){progExIdx=i;buildProgPills();renderProgChart();};
-    c.appendChild(b);
-  });
-}
-function renderProgChart(){
-  var exs=getDayExs(progDay);
-  if(!exs.length)return;
-  var ex=exs[progExIdx];
+
+function getExStats(ex){
   var hist=H[ex.id]||[];
+  var current=parseFloat(gw(ex.id,ex.w))||0;
+  if(!hist.length)return {start:current,current:current,pr:current,delta:0,pct:0,isPr:false,hist:[],sessions:0,newPr:false};
+  var vals=hist.map(function(h){return h.w;});
+  var start=vals[0];
+  var actual=vals[vals.length-1];
+  var pr=Math.max.apply(null,vals);
+  if(current>pr)pr=current;
+  var delta=Math.round((actual-start)*100)/100;
+  var pct=start>0?Math.round((actual-start)/start*100):0;
+  var isPr=actual>=pr&&pr>start;
+  // Check if PR was set this week
+  var newPr=false;
+  for(var i=hist.length-1;i>=0;i--){
+    if(hist[i].w>=pr&&isThisWeek(hist[i].date)){newPr=true;break;}
+  }
+  return {start:start,current:actual,pr:pr,delta:delta,pct:pct,isPr:isPr,hist:hist,sessions:hist.length,newPr:newPr};
+}
+
+function renderPesoTab(){
+  var exs=getDayExs(progDay);
+  var container=document.getElementById('tab-peso');
+
+  if(!exs.length){
+    container.innerHTML='<div class="pr-empty"><span class="pr-empty-ico">📊</span>Este dia no tiene ejercicios con peso trackeable.</div>';
+    return;
+  }
+
+  var stats=exs.map(function(ex){return {ex:ex,s:getExStats(ex)};});
+  var totalPrs=0,totalNewPrs=0,bestPct=0;
+  stats.forEach(function(d){
+    if(d.s.isPr)totalPrs++;
+    if(d.s.newPr)totalNewPrs++;
+    if(Math.abs(d.s.pct)>Math.abs(bestPct))bestPct=d.s.pct;
+  });
+  var totalSessions=0;
+  stats.forEach(function(d){if(d.s.sessions>totalSessions)totalSessions=d.s.sessions;});
+
+  var h='';
+
+  // Summary cards
+  h+='<div class="pr-summary">';
+  h+='<div class="pr-sum-card'+(totalNewPrs>0?' gold':'')+'"><span class="pr-sum-ico">'+(totalNewPrs>0?'🏆':'🎯')+'</span><div class="pr-sum-v">'+totalNewPrs+'</div><div class="pr-sum-l">PR nuevo'+(totalNewPrs!==1?'s':'')+' esta semana</div></div>';
+  h+='<div class="pr-sum-card"><span class="pr-sum-ico">💪</span><div class="pr-sum-v">'+totalPrs+'</div><div class="pr-sum-l">en record personal</div></div>';
+  h+='<div class="pr-sum-card'+(bestPct>0?' gold':'')+'"><span class="pr-sum-ico">'+(bestPct>0?'📈':'📊')+'</span><div class="pr-sum-v">'+(bestPct>0?'+':'')+bestPct+'%</div><div class="pr-sum-l">mejor progreso</div></div>';
+  h+='</div>';
+
+  // Exercise cards
+  h+='<div class="pr-board">';
+  stats.forEach(function(d,idx){
+    var ex=d.ex,s=d.s;
+    var unit=ex.u||'kg';
+    var dotClass=ex.dot||'';
+    var hasPr=s.isPr;
+    var hasData=s.hist.length>0;
+
+    // Delta text
+    var deltaText,deltaClass;
+    if(!hasData){deltaText='Sin datos';deltaClass='flat';}
+    else if(s.delta>0){deltaText='+'+fmt(s.delta)+' '+unit;deltaClass='up';}
+    else if(s.delta<0){deltaText=fmt(s.delta)+' '+unit;deltaClass='down';}
+    else{deltaText='= igual';deltaClass='flat';}
+
+    // Gauge calculations
+    var gaugeMax=Math.max(s.pr*1.2,s.current*1.2,s.start*1.5);
+    if(gaugeMax<=0)gaugeMax=1;
+    var fillPct=Math.min(s.current/gaugeMax*100,100);
+    var prPct=s.pr/gaugeMax*100;
+    var fillClass=hasPr?'at-pr':s.delta>0?'progressing':'stagnant';
+
+    var isExpanded=_expandedPrEx===ex.id;
+
+    h+='<div class="pr-card'+(hasPr?' is-pr':'')+(isExpanded?' expanded':'')+'" id="prc-'+ex.id+'">';
+
+    // Header
+    h+='<div class="pr-card-head" onclick="togglePrCard(\''+ex.id+'\','+idx+')">';
+    h+='<div class="pr-card-dot '+dotClass+'"></div>';
+    h+='<div class="pr-card-info"><div class="pr-card-name">'+ex.n+(hasPr?'<span class="pr-badge">★ PR</span>':'')+'</div>';
+    h+='<div class="pr-card-sub">'+ex.s+'×'+ex.r+(hasData?' · '+s.sessions+' sesion'+(s.sessions!==1?'es':''):'')+'</div></div>';
+    h+='<div class="pr-card-right"><div class="pr-card-weight">'+fmt(s.current)+'<span style="font-size:12px;font-weight:400;color:rgba(235,235,245,.4);margin-left:2px">'+unit+'</span></div>';
+    h+='<div class="pr-card-delta '+deltaClass+'">'+deltaText+'</div></div>';
+    h+='<span class="pr-chev">▼</span>';
+    h+='</div>';
+
+    // Gauge
+    if(hasData){
+      h+='<div class="pr-gauge">';
+      h+='<div class="pr-gauge-track">';
+      h+='<div class="pr-gauge-fill '+fillClass+'" style="width:'+fillPct+'%"></div>';
+      if(s.pr>s.current){
+        h+='<div class="pr-gauge-pr-mark" style="left:'+prPct+'%"><span class="pr-gauge-pr-label">PR '+fmt(s.pr)+'</span></div>';
+      }
+      h+='</div>';
+      h+='<div class="pr-gauge-labels"><span>'+fmt(s.start)+' '+unit+'</span><span>'+fmt(s.current)+' '+unit+'</span></div>';
+      h+='</div>';
+    }
+
+    // Expandable detail
+    h+='<div class="pr-detail"><div class="pr-detail-inner">';
+    h+='<div class="pr-detail-chart"><canvas id="prchart-'+ex.id+'"></canvas></div>';
+    h+='<div class="pr-detail-hist" id="prhist-'+ex.id+'"></div>';
+    h+='</div></div>';
+
+    h+='</div>';
+  });
+  h+='</div>';
+
+  container.innerHTML=h;
+
+  // If one was expanded, render its chart
+  if(_expandedPrEx){
+    var found=stats.find(function(d){return d.ex.id===_expandedPrEx;});
+    if(found)renderPrDetail(found.ex);
+  }
+}
+
+function togglePrCard(exId,idx){
+  var wasExpanded=_expandedPrEx===exId;
+  // Close any open card
+  var prev=document.querySelector('.pr-card.expanded');
+  if(prev)prev.classList.remove('expanded');
+  if(_prDetailChart){_prDetailChart.destroy();_prDetailChart=null;}
+
+  if(wasExpanded){
+    _expandedPrEx=null;
+    return;
+  }
+
+  _expandedPrEx=exId;
+  var card=document.getElementById('prc-'+exId);
+  if(card){
+    card.classList.add('expanded');
+    setTimeout(function(){card.scrollIntoView({behavior:'smooth',block:'nearest'});},100);
+  }
+
+  // Find exercise definition
+  var exDef=null;
+  getDayExs(progDay).forEach(function(ex){if(ex.id===exId)exDef=ex;});
+  if(exDef)renderPrDetail(exDef);
+}
+
+function renderPrDetail(ex){
+  var hist=H[ex.id]||[];
+  var unit=ex.u||'kg';
+  var canvas=document.getElementById('prchart-'+ex.id);
+  var histEl=document.getElementById('prhist-'+ex.id);
+  if(!canvas||!histEl)return;
 
   if(!hist.length){
-    document.getElementById('ps-inicio').textContent='—';
-    document.getElementById('ps-actual').textContent='—';
-    document.getElementById('ps-mejora').textContent='—';
-    document.getElementById('hist-list').innerHTML='<div class="hist-hdr">Historial</div><div style="padding:40px 20px;text-align:center;font-size:13px;color:rgba(235,235,245,.3);line-height:1.7">Sin datos aun.<br>Completa una sesion para ver tu progreso.</div>';
-    if(progChart){progChart.destroy();progChart=null;}
-    var canvas=document.getElementById('prog-chart');
-    canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height);
+    histEl.innerHTML='<div style="padding:30px 16px;text-align:center;font-size:12px;color:rgba(235,235,245,.3)">Completa una sesion para ver tu progreso.</div>';
     return;
   }
 
   var labels=hist.map(function(h){return h.date;});
   var vals=hist.map(function(h){return h.w;});
-  var inicio=vals[0];var actual=vals[vals.length-1];
-  var mejora=Math.round((actual-inicio)*10)/10;
-
-  document.getElementById('ps-inicio').textContent=fmt(inicio)+' kg';
-  document.getElementById('ps-actual').textContent=fmt(actual)+' kg';
-  document.getElementById('ps-mejora').textContent=(mejora>=0?'+':'')+fmt(mejora)+' kg';
-
-  if(progChart)progChart.destroy();
   var mn=Math.min.apply(null,vals);var mx=Math.max.apply(null,vals);
   var pad=Math.max(5,(mx-mn)*0.5+2);
 
-  progChart=new Chart(document.getElementById('prog-chart'),{
+  if(_prDetailChart)_prDetailChart.destroy();
+  _prDetailChart=new Chart(canvas,{
     type:'line',
-    data:{labels:labels,datasets:[{data:vals,borderColor:'#e8d5b0',backgroundColor:'rgba(232,213,176,0.07)',borderWidth:2,pointBackgroundColor:'#e8d5b0',pointRadius:5,pointHoverRadius:7,fill:true,tension:0.3}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#242426',titleColor:'rgba(235,235,245,.5)',bodyColor:'#e8d5b0',bodyFont:{size:14,weight:'bold'},callbacks:{label:function(ctx){return ctx.parsed.y+' kg';}}}},scales:{x:{grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'rgba(235,235,245,.35)',font:{size:10},maxRotation:45}},y:{min:mn-pad,max:mx+pad,grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'rgba(235,235,245,.35)',font:{size:10},callback:function(v){return v+' kg';}}}}}
+    data:{labels:labels,datasets:[{data:vals,borderColor:'#e8d5b0',backgroundColor:'rgba(232,213,176,0.07)',borderWidth:2,pointBackgroundColor:vals.map(function(v){return v>=mx?'#30d158':'#e8d5b0';}),pointRadius:4,pointHoverRadius:6,fill:true,tension:0.3}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#242426',titleColor:'rgba(235,235,245,.5)',bodyColor:'#e8d5b0',bodyFont:{size:14,weight:'bold'},callbacks:{label:function(ctx){var v=ctx.parsed.y;var isPeak=v>=mx;return v+' '+unit+(isPeak?' ★ PR':'');}}}},scales:{x:{grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'rgba(235,235,245,.35)',font:{size:10},maxRotation:45}},y:{min:mn-pad,max:mx+pad,grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'rgba(235,235,245,.35)',font:{size:10},callback:function(v){return v+' '+unit;}}}}}
   });
 
   var hl='<div class="hist-hdr">Historial</div>';
-  for(var i=hist.length-1;i>=0;i--){hl+='<div class="hist-row"><span class="hist-date">'+hist[i].date+'</span><span class="hist-w">'+fmt(hist[i].w)+' kg</span></div>';}
-  document.getElementById('hist-list').innerHTML=hl;
+  for(var i=hist.length-1;i>=0;i--){
+    var isPeak=hist[i].w>=mx;
+    hl+='<div class="hist-row"><span class="hist-date">'+hist[i].date+(isPeak?' <span class="pr-badge">★</span>':'')+'</span><span class="hist-w">'+fmt(hist[i].w)+' '+unit+'</span><button class="hist-del" onclick="delHistPr(\''+ex.id+'\','+i+')">&times;</button></div>';
+  }
+  histEl.innerHTML=hl;
+}
+
+function delHistPr(exId,idx){
+  if(!H[exId])return;
+  H[exId].splice(idx,1);
+  if(!H[exId].length)delete H[exId];
+  saveHistory();
+  renderPesoTab();
+  renderStreak();
 }
 
 /* ── Tab: Volumen ── */
@@ -855,7 +1056,11 @@ function renderStreak(){
 }
 
 /* ── Init ── */
-load();build(0);build(1);build(2);
+load();
+document.getElementById('c0').innerHTML='';
+document.getElementById('c1').innerHTML='';
+document.getElementById('c2').innerHTML='';
+build(0);build(1);build(2);
 D.forEach(function(day){day.s.forEach(function(sec){sec.e.forEach(function(ex){if(ex.st>0&&ex.w!==null)applyReady(ex.id);});});});
 renderStreak();
 </script>
