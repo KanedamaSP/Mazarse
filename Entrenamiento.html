@@ -223,6 +223,9 @@ body{font-family:-apple-system,sans-serif;background:#0a0a0a;color:#f2f2f7;-webk
 /* Chevron */
 .pr-chev{font-size:10px;color:rgba(235,235,245,.25);transition:transform .2s;display:inline-block;margin-left:4px}
 .pr-card.expanded .pr-chev{transform:rotate(180deg)}
+/* ── Toast ── */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:#242426;color:#f2f2f7;font-size:14px;font-weight:600;padding:12px 20px;border-radius:12px;border:1px solid rgba(255,255,255,.12);opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;z-index:999;white-space:nowrap;}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0);}
 </style>
 </head>
 <body>
@@ -247,8 +250,8 @@ body{font-family:-apple-system,sans-serif;background:#0a0a0a;color:#f2f2f7;-webk
 
 <div id="screen-train" class="screen on">
   <div id="p0" class="panel on"><div class="day-title">Empuje + Cuadriceps</div><div class="day-sub">Pecho &middot; Hombro &middot; Deltoides lateral &middot; Triceps &middot; Cuadriceps</div><div id="c0"></div></div>
-  <div id="p1" class="panel"><div class="day-title">Traccion + Gluteo</div><div class="day-sub">Dorsal &middot; Biceps &middot; Isquiotibiales &middot; Gluteo &middot; Abductor</div><div id="c1"></div></div>
-  <div id="p2" class="panel"><div class="day-title">Full body + Correctivo</div><div class="day-sub">Compuestos globales &middot; Deltoides lateral &middot; Core &middot; Estabilizadores</div><div id="c2"></div></div>
+  <div id="p1" class="panel"><div class="day-title">Traccion + Gluteo</div><div class="day-sub">Dorsal &middot; Biceps &middot; Isquiotibiales &middot; Gluteo &middot; Deltoides lateral</div><div id="c1"></div></div>
+  <div id="p2" class="panel"><div class="day-title">Full body + Correctivo</div><div class="day-sub">Compuestos globales &middot; Gluteo medio &middot; Core &middot; Estabilizadores</div><div id="c2"></div></div>
 </div>
 
 <div id="screen-progress" class="screen">
@@ -310,7 +313,7 @@ var D=[
    {id:"d0e3",n:"Prensa de piernas",m:"Technogym Leg Press 45 grados",w2:"Zona de piernas. Maquina grande inclinada a 45 grados.",dot:"d-legs",s:"3",r:"10-12",rir:"RIR 2",w:55,st:5,u:"kg",ch:[{t:"compuesto clave",c:"cp"}],wu:"1x10 al 50% (~27 kg). Prepara rodillas y caderas. No cuenta para el volumen.",no:"Rango completo. Rodilla no se bloquea arriba. Pies a anchura de hombros. No hipextender la lumbar al subir.",pr:"Sube 5 kg al completar 3x12 con RIR2."},
    {id:"d0e4",n:"Extension de cuadriceps",m:"Technogym Leg Extension",w2:"Maquina con rodillo acolchado para las espinillas. Junto a la prensa.",dot:"d-legs",s:"3",r:"12-15",rir:"RIR 2",w:30,st:2.5,u:"kg",ch:[],wu:null,no:"Pausa de 1 segundo en extension maxima. Baja en 2-3 segundos.",pr:"Sube 2,5-5 kg al completar 3x15."},
    {id:"d0e5",n:"Extension de triceps polea alta",m:"Technogym Cable Station, torre alta",w2:"Torre de poleas dobles. Pon el accesorio de cuerda o barra recta en la polea de arriba.",dot:"d-push",s:"3",r:"12-15",rir:"RIR 2",w:12.5,st:2.5,u:"kg",ch:[],wu:null,no:"Codo pegado al cuerpo y fijo. Solo se mueve el antebrazo hacia abajo.",pr:"Sube 2,5 kg al completar 3x15."},
-   {id:"d0e6",n:"Elevacion lateral con mancuerna",m:"Mancuernas ligeras",w2:"Zona de peso libre. Coge mancuernas de 5 kg del soporte. De pie.",dot:"d-push",s:"3",r:"12-15",rir:"RIR 2",w:5,st:2.5,u:"kg c/u",ch:[{t:"rango limitado 0-50°",c:"co"},{t:"deltoides lateral",c:"cp"}],wu:null,no:"CLAVE HOMBRO: eleva los brazos ligeramente POR DELANTE del plano del cuerpo (~30 grados hacia delante). Rango MAXIMO 50 grados de abduccion — NUNCA superar esa altura. Esto esquiva el arco doloroso (60-120 grados). Pulgar neutro o ligeramente hacia abajo. Pausa de 1 segundo arriba. Baja en 2-3 segundos. La mancuerna tiene maxima tension arriba, complementa el cable del Dia 3 que tiene tension constante.",pr:"Sube 2,5 kg al completar 3x15 con rango limpio. La tecnica importa mas que el peso."}
+   {id:"d0e6",n:"Elevacion lateral con mancuerna",m:"Mancuernas ligeras",w2:"Zona de peso libre. Coge mancuernas de 5 kg del soporte. De pie.",dot:"d-push",s:"3",r:"12-15",rir:"RIR 2",w:5,st:2.5,u:"kg c/u",ch:[{t:"rango limitado 0-50°",c:"co"},{t:"deltoides lateral",c:"cp"}],wu:null,no:"CLAVE HOMBRO: eleva los brazos ligeramente POR DELANTE del plano del cuerpo (~30 grados hacia delante). Rango MAXIMO 50 grados de abduccion — NUNCA superar esa altura. Esto esquiva el arco doloroso (60-120 grados). Pulgar neutro o ligeramente hacia abajo. Pausa de 1 segundo arriba. Baja en 2-3 segundos. La mancuerna tiene maxima tension arriba.",pr:"Sube 2,5 kg al completar 3x15 con rango limpio. La tecnica importa mas que el peso."}
   ]},
   {l:"Correctivo hombro + Core (obligatorio)",r:true,e:[
    {id:"d0c0",n:"Rotacion externa con goma",m:"Goma ligera o mancuerna 2-3 kg",w2:"Zona de accesorios.",dot:"d-corr",s:"3",r:"15",rir:"-",w:null,st:0,u:"muy ligero",ch:[{t:"correctivo",c:"co"}],wu:null,no:"Codo a 90 grados pegado al costado. Gira el antebrazo hacia fuera sin mover el codo. Refuerza el infraespinoso — descomprime el espacio subacromial.",pr:"No aumentar carga. La calidad del movimiento es lo importante."},
@@ -328,7 +331,7 @@ var D=[
    {id:"d1e3",n:"Hip thrust",m:"Banco plano + barra libre",w2:"Zona de peso libre. Hombros apoyados en borde del banco plano. Barra sobre las caderas con almohadilla.",dot:"d-legs",s:"3",r:"10-12",rir:"RIR 2",w:30,st:5,u:"kg",ch:[{t:"compuesto clave",c:"cp"},{t:"hiperlordosis",c:"co"}],wu:"1x10 al 50% (~15 kg). Activa el gluteo y comprueba la posicion antes de cargar fuerte.",no:"Pausa de 2 segundos arriba con el gluteo apretado. Pies a anchura de cadera, rodillas a 90 grados. CLAVE HIPERLORDOSIS: al subir, mete el abdomen y haz una retroversion pelvica (inclina la pelvis hacia atras, como si quisieras meter el pubis hacia arriba). No hipextendas la lumbar arriba del todo. Si la zona lumbar se arquea al llegar arriba, estas haciendo el movimiento mal.",pr:"Sube 5 kg al completar 3x12 con pausa y retroversion controlada."},
    {id:"d1e4",n:"Curl femoral tumbado",m:"Technogym Leg Curl (boca abajo)",w2:"Maquina donde te tumbas boca abajo y curlas las piernas hacia el gluteo.",dot:"d-legs",s:"3",r:"10-12",rir:"RIR 2",w:37.5,st:2.5,u:"kg",ch:[],wu:null,no:"Baja lento: 3 segundos en la fase de bajada. Rango completo.",pr:"Sube 2,5-5 kg al completar 3x12."},
    {id:"d1e5",n:"Curl de biceps polea baja",m:"Technogym Cable Station, torre baja",w2:"Torre de poleas en posicion baja. Usa la barra corta recta o el accesorio EZ curvo.",dot:"d-pull",s:"3",r:"12-15",rir:"RIR 2",w:25,st:2.5,u:"kg",ch:[],wu:null,no:"Codo fijo a los costados. No balancear el torso. Aprieta el biceps arriba.",pr:"Sube 2,5 kg al completar 3x15."},
-   {id:"d1e6",n:"Abduccion de cadera en maquina",m:"Technogym Hip Abduction",w2:"Maquina sentada con almohadillas laterales en las rodillas. Zona de piernas.",dot:"d-legs",s:"3",r:"12-15",rir:"RIR 2",w:35,st:5,u:"kg",ch:[{t:"gluteo medio",c:"cp"}],wu:null,no:"Abre las piernas contra la resistencia. Pausa de 1 segundo en maxima apertura. Controla el retorno en 2-3 segundos. Inclinate ligeramente hacia delante para mayor activacion del gluteo medio.",pr:"Sube 5 kg al completar 3x15."}
+   {id:"d1e6",n:"Elevacion lateral en cable",m:"Technogym Cable Station, torre baja",w2:"Torre de poleas en posicion baja. Sin accesorio: agarra el mosqueton o la bola con la mano del lado contrario.",dot:"d-push",s:"3",r:"12-15",rir:"RIR 2",w:5,st:2.5,u:"kg",ch:[{t:"rango limitado 0-50°",c:"co"},{t:"deltoides lateral",c:"cp"}],wu:null,no:"CLAVE HOMBRO: eleva el brazo ligeramente POR DELANTE del plano del cuerpo (~30 grados hacia delante). Rango MAXIMO 50 grados de abduccion — NUNCA superar esa altura. Pulgar neutro o ligeramente hacia abajo. Pausa de 1 segundo arriba. Controla la bajada.",pr:"Sube 2,5 kg al completar 3x15 con rango limpio. La tecnica importa mas que el peso."}
   ]},
   {l:"Correctivo hombro + Core (obligatorio)",r:true,e:[
    {id:"d1c0",n:"Retraccion escapular en polea",m:"Technogym Cable Station, torre media",w2:"Torre de poleas a la altura del pecho. Accesorio en V o barra corta.",dot:"d-corr",s:"3",r:"15",rir:"-",w:null,st:0,u:"muy ligero",ch:[{t:"correctivo",c:"co"}],wu:null,no:"Brazos casi extendidos. Solo juntar las escapulas por detras. Estabiliza la escapula — fundamental para el hombro.",pr:"Activacion pura. Peso minimo siempre."},
@@ -342,11 +345,11 @@ var D=[
   {l:"Bloque principal",r:false,e:[
    {id:"d2e0",n:"Sentadilla en multipower",m:"Technogym Multipower (Smith Machine)",w2:"Barra fijada en railes verticales. Zona de peso libre. La barra pesa 10-15 kg sin discos.",dot:"d-legs",s:"3",r:"8-10",rir:"RIR 2-3",w:25,st:2.5,u:"kg en discos",ch:[{t:"compuesto clave",c:"cp"}],wu:"1x8 solo con la barra (sin discos). Activa el patron de sentadilla, calienta rodillas y caderas.",no:"Pies ligeramente por delante de la vertical de la barra. Profundidad progresiva. No hipextender la lumbar arriba.",pr:"Sube 2,5-5 kg por semana mientras la forma lo permita."},
    {id:"d2e1",n:"Jalon agarre neutro V-bar",m:"Technogym Lat Machine, accesorio V-bar",w2:"La misma maquina de jalon. Cambia la barra larga por el accesorio triangular en V.",dot:"d-pull",s:"3",r:"10-12",rir:"RIR 2",w:45,st:2.5,u:"kg",ch:[{t:"seguro hombro",c:"cg"}],wu:"1x10 al 50% (~22 kg). Activa el dorsal con agarre neutro antes de las series efectivas.",no:"Agarre neutro, palmas enfrentadas. Reduce tension en el hombro. Tira hasta el esternon.",pr:"Sube 2,5 kg al completar 3x12."},
-   {id:"d2e2",n:"Press pecho mancuernas banco plano",m:"Mancuernas libres + banco plano",w2:"Zona de peso libre. Coge mancuernas de 14 kg del soporte. Tumba en un banco plano.",dot:"d-push",s:"3",r:"10-12",rir:"RIR 2",w:14,st:2.5,u:"kg c/u",ch:[{t:"seguro hombro",c:"cg"}],wu:null,no:"Codos a 30-45 grados del torso. No bajar las mancuernas mas alla del nivel del pecho.",pr:"Sube 2,5 kg al completar 3x12."},
-   {id:"d2e3",n:"Peso muerto rumano (RDL) mancuernas",m:"Mancuernas libres + zona de peso libre",w2:"Coge mancuernas de 14-16 kg del soporte. Ejecuta de pie con espalda neutra. Trabaja isquios en elongacion, complementa el curl femoral del Dia 2.",dot:"d-legs",s:"3",r:"10-12",rir:"RIR 2-3",w:14,st:2.5,u:"kg c/u",ch:[{t:"bisagra clave",c:"cp"}],wu:"1x8 con mancuernas ligeras (8 kg). Practica la bisagra de cadera antes de las series efectivas.",no:"Pies a anchura de cadera. Rodillas ligeramente flexionadas y fijas. Bisagra de cadera: empuja las caderas hacia atras bajando las mancuernas por las espinillas hasta notar tension en isquios. Espalda neutra en todo momento. No es una sentadilla.",pr:"Sube 2,5 kg c/u al completar 3x12 con forma perfecta."},
+   {id:"d2e2",n:"Press pecho mancuernas banco plano",m:"Mancuernas libres + banco plano",w2:"Zona de peso libre. Coge mancuernas de 12,5 kg del soporte. Tumba en un banco plano.",dot:"d-push",s:"3",r:"10-12",rir:"RIR 2",w:12.5,st:2.5,u:"kg c/u",ch:[{t:"seguro hombro",c:"cg"}],wu:null,no:"Codos a 30-45 grados del torso. No bajar las mancuernas mas alla del nivel del pecho.",pr:"Sube 2,5 kg al completar 3x12."},
+   {id:"d2e3",n:"Peso muerto rumano (RDL) mancuernas",m:"Mancuernas libres + zona de peso libre",w2:"Coge mancuernas de 12,5 kg del soporte. Ejecuta de pie con espalda neutra. Trabaja isquios en elongacion, complementa el curl femoral del Dia 2.",dot:"d-legs",s:"3",r:"10-12",rir:"RIR 2-3",w:12.5,st:2.5,u:"kg c/u",ch:[{t:"bisagra clave",c:"cp"}],wu:"1x8 con mancuernas ligeras (7,5 kg). Practica la bisagra de cadera antes de las series efectivas.",no:"Pies a anchura de cadera. Rodillas ligeramente flexionadas y fijas. Bisagra de cadera: empuja las caderas hacia atras bajando las mancuernas por las espinillas hasta notar tension en isquios. Espalda neutra en todo momento. No es una sentadilla.",pr:"Sube 2,5 kg c/u al completar 3x12 con forma perfecta."},
+   {id:"d2e6",n:"Abduccion de cadera en maquina",m:"Technogym Hip Abduction",w2:"Maquina sentada con almohadillas laterales en las rodillas. Zona de piernas.",dot:"d-legs",s:"3",r:"12-15",rir:"RIR 2",w:35,st:5,u:"kg",ch:[{t:"gluteo medio",c:"cp"}],wu:null,no:"Abre las piernas contra la resistencia. Pausa de 1 segundo en maxima apertura. Controla el retorno en 2-3 segundos. Inclinate ligeramente hacia delante para mayor activacion del gluteo medio.",pr:"Sube 5 kg al completar 3x15."},
    {id:"d2e4",n:"Curl martillo con mancuernas",m:"Mancuernas libres",w2:"Zona de peso libre. Mancuernas de 10 kg. De pie o sentado en banco.",dot:"d-pull",s:"3",r:"12-15",rir:"RIR 2",w:10,st:2.5,u:"kg c/u",ch:[],wu:null,no:"Agarre neutro, palmas enfrentadas. Codo fijo al costado.",pr:"Sube 2,5 kg al completar 3x15."},
-   {id:"d2e5",n:"Extension triceps polea baja",m:"Technogym Cable Station, torre baja",w2:"Torre de poleas en posicion baja. Usa la barra EZ corta o la cuerda.",dot:"d-push",s:"3",r:"12-15",rir:"RIR 2",w:12.5,st:2.5,u:"kg",ch:[],wu:null,no:"El codo no se mueve. Tension constante en la polea, menos estres en el codo.",pr:"Sube 2,5 kg al completar 3x15."},
-   {id:"d2e6",n:"Elevacion lateral en cable",m:"Technogym Cable Station, torre baja",w2:"Torre de poleas en posicion baja. Sin accesorio: agarra el mosqueton o la bola con la mano del lado contrario.",dot:"d-push",s:"3",r:"12-15",rir:"RIR 2",w:5,st:2.5,u:"kg",ch:[{t:"rango limitado 0-50°",c:"co"},{t:"deltoides lateral",c:"cp"}],wu:null,no:"CLAVE HOMBRO: eleva el brazo ligeramente POR DELANTE del plano del cuerpo (~30 grados hacia delante). Rango MAXIMO 50 grados de abduccion — NUNCA superar esa altura. Pulgar neutro o ligeramente hacia abajo. Pausa de 1 segundo arriba. Controla la bajada.",pr:"Sube 2,5 kg al completar 3x15 con rango limpio. La tecnica importa mas que el peso."}
+   {id:"d2e5",n:"Overhead triceps extension en cable",m:"Technogym Cable Station, torre baja",w2:"Torre de poleas en posicion baja. Usa la barra EZ corta o la cuerda.",dot:"d-push",s:"3",r:"12-15",rir:"RIR 2",w:12.5,st:2.5,u:"kg",ch:[],wu:null,no:"El codo no se mueve. Tension constante en la polea, menos estres en el codo.",pr:"Sube 2,5 kg al completar 3x15."}
   ]},
   {l:"Correctivo hombro + Core (obligatorio)",r:true,e:[
    {id:"d2c0",n:"Face pull en polea alta",m:"Technogym Cable Station, torre alta",w2:"Polea alta con accesorio de cuerda larga.",dot:"d-corr",s:"3",r:"15",rir:"-",w:null,st:0,u:"muy ligero",ch:[{t:"correctivo",c:"co"}],wu:null,no:"Tira hacia la cara, codos arriba, separa las manos. Pausa 1 segundo. Presente en los 3 dias porque es el pilar de rehabilitacion del manguito.",pr:"Ejercicio de salud del hombro, no de fuerza. No aumentar peso."},
@@ -363,7 +366,7 @@ var D=[
 <script>
 var W={};var H={};var R={};
 var currentDay=0;var progDay=0;var progExIdx=0;
-var progChart=null;var volChart=null;
+var volChart=null;
 var progTab='volumen';
 
 /* ── Persistencia ── */
@@ -487,6 +490,7 @@ function swDay(i){
   } else {
     document.querySelectorAll('.panel').forEach(function(p,j){p.classList.toggle('on',i===j);});
     build(i);
+    D[i].s.forEach(function(sec){sec.e.forEach(function(ex){if(ex.st>0&&ex.w!==null)applyReady(ex.id);});});
     window.scrollTo(0,0);
   }
 }
@@ -605,6 +609,7 @@ function openProgress(){
   window.scrollTo(0,0);
 }
 function closeProgress(){
+  if(volChart){volChart.destroy();volChart=null;}
   document.getElementById('screen-progress').classList.remove('on');
   document.getElementById('screen-train').classList.add('on');
   var i=currentDay;
@@ -615,6 +620,8 @@ function closeProgress(){
 
 /* ── Tab switcher ── */
 function setProgTab(tab){
+  if(_prDetailChart){_prDetailChart.destroy();_prDetailChart=null;}
+  _expandedPrEx=null;
   progTab=tab;
   document.getElementById('tab-btn-peso').classList.toggle('on',tab==='peso');
   document.getElementById('tab-btn-volumen').classList.toggle('on',tab==='volumen');
@@ -953,6 +960,14 @@ function renderVolume(){
   }
 }
 
+/* ── Toast ── */
+function showToast(msg){
+  var t=document.getElementById('app-toast');
+  if(!t){t=document.createElement('div');t.id='app-toast';t.className='toast';document.body.appendChild(t);}
+  t.textContent=msg;t.classList.add('on');
+  clearTimeout(t._tid);t._tid=setTimeout(function(){t.classList.remove('on');},2500);
+}
+
 /* ── Backup ── */
 function exportBackup(){
   var data={v:1,fecha:new Date().toISOString(),W:W,H:H,R:R};
@@ -977,9 +992,9 @@ function importBackup(input){
       if(d.H){H=d.H;saveHistory();}
       if(d.R){R=d.R;saveReady();}
       input.value='';
-      alert('Datos restaurados correctamente.');
+      showToast('✓ Datos restaurados correctamente.');
       location.reload();
-    }catch(err){alert('Archivo no valido.');}
+    }catch(err){showToast('⚠ Archivo no válido.');}
   };
   reader.readAsText(file);
 }
@@ -1004,22 +1019,20 @@ function getWeeklySessionDates(){
 function calcStreak(){
   var weeks=getWeeklySessionDates();
   if(!weeks.length)return 0;
-  // Semana actual
-  var now=new Date(),day=now.getDay();
-  var mon=new Date(now.getFullYear(),now.getMonth(),now.getDate()-day+(day===0?-6:1));
   function toMon(wkStr){var p=wkStr.split('/');return new Date(+p[2],p[1]-1,+p[0]);}
+  var now=new Date(),day=now.getDay();
+  var thisMon=new Date(now.getFullYear(),now.getMonth(),now.getDate()-day+(day===0?-6:1));
+  thisMon.setHours(0,0,0,0);
+  // Construye set de lunes de semanas con sesion
+  var weekSet={};
+  weeks.forEach(function(w){weekSet[toMon(w).getTime()]=true;});
   var streak=0;
-  // Recorre hacia atras desde la semana actual
-  var cursor=new Date(mon);
-  for(var i=weeks.length-1;i>=0;i--){
-    var wMon=toMon(weeks[i]);
-    var diff=Math.round((cursor-wMon)/(7*86400000));
-    if(diff===0){streak++;cursor=new Date(cursor.getTime()-7*86400000);}
-    else if(diff===1&&streak===0){
-      // Semana actual sin sesion todavia — no rompe el streak
-      cursor=new Date(cursor.getTime()-7*86400000);
-      i++; // recheck same week entry
-    } else break;
+  var cursor=new Date(thisMon);
+  // Si la semana actual no tiene sesion aun, empieza desde la anterior (no rompe racha)
+  if(!weekSet[cursor.getTime()])cursor=new Date(cursor.getTime()-7*86400000);
+  while(weekSet[cursor.getTime()]){
+    streak++;
+    cursor=new Date(cursor.getTime()-7*86400000);
   }
   return streak;
 }
@@ -1060,8 +1073,8 @@ load();
 document.getElementById('c0').innerHTML='';
 document.getElementById('c1').innerHTML='';
 document.getElementById('c2').innerHTML='';
-build(0);build(1);build(2);
-D.forEach(function(day){day.s.forEach(function(sec){sec.e.forEach(function(ex){if(ex.st>0&&ex.w!==null)applyReady(ex.id);});});});
+build(0);
+D[0].s.forEach(function(sec){sec.e.forEach(function(ex){if(ex.st>0&&ex.w!==null)applyReady(ex.id);});});
 renderStreak();
 </script>
 </body>
